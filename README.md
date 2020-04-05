@@ -23,7 +23,6 @@ PROJECT
 │   ├── cleaned
 │   ├── vod
 │   └── temp
-├── lib
 ├── notebooks
 │   └── .gitkeep
 ├── references
