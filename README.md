@@ -1,6 +1,6 @@
 # DSC180B
 Exploring Predictive Policing in San Diego for DSC180B capstone project
-
+Stephanie is making an edit HERE
 ## Usage Instructions
 
 * Description of targets and using `run.py`
