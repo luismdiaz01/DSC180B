@@ -1,0 +1,5 @@
+{
+    "url": "https://data.lacity.org/api/views/ci25-wgt7/rows.csv?accessType=DOWNLOAD",
+    "outpath": "raw",
+    "title": "stops"
+}
