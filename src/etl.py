@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 def get_data(url, outpath = 'raw', title = 'stops'):
     if not os.path.exists(outpath):
