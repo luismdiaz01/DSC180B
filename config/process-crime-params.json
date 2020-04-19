@@ -1,0 +1,6 @@
+{
+    "inpath": "data/raw/crime.csv",
+    "outpath": "data/cleaned",
+    "title": "crime",
+    "cols":["DR_NO","Date Rptd","Year","AREA NAME","Rpt Dist No","Crime Type","Arrested","LAT","LON"]
+}
