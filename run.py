@@ -6,6 +6,7 @@ import os
 
 sys.path.insert(0, 'src') # add library code to path
 from etl import get_data, process, process_crimes
+from eda_crimes import generate_viz
 
 
 DATA_PARAMS = 'config/data-params.json'
@@ -13,6 +14,7 @@ DATA_PARAMS = 'config/data-params.json'
 PROCESS_PARAMS = 'config/process-params.json'
 #TEST_PROCESS_PARAMS = 'config/test-process-params.json'
 PROCESS_CRIME_PARAMS = 'config/process-crime-params.json'
+EDA_CRIME_PARAMS = 'config/eda-crimes-params.json'
 
 def load_params(fp):
     with open(fp) as fh:
@@ -24,6 +26,8 @@ def load_params(fp):
 def main(targets):
     if not os.path.exists('data/'):
         os.mkdir('data/')
+    if not os.path.exists('viz/'):
+        os.mkdir('viz/')
         
     # make the clean target
     if 'clean' in targets:
@@ -60,6 +64,14 @@ def main(targets):
 #        get_data(**cfg)    
 #        cfg = load_params(TEST_PROCESS_PARAMS)
 #        process(**cfg)
+
+    if 'eda-crime' in targets:
+        if not os.path.exists('viz/EDA'):
+            os.mkdir('viz/EDA')
+            
+        cfg = load_params(EDA_CRIME_PARAMS)
+        generate_viz(**cfg)
+        
     return
 
 
