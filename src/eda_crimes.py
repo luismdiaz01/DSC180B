@@ -22,7 +22,7 @@ def generate_viz(inpath='data/cleaned/crime-processed.csv', outpath='viz/EDA/Cri
 
 def crimes_by_year(df, outpath):
     print('Plotting crimes per year.')
-    fig = plt.figure(figsize=(10, 8))
+    fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
     df.loc[df.Year != 2020].groupby('Year').size().plot(kind='bar', ax=ax)
     plt.title('Crimes by Year')
@@ -33,7 +33,7 @@ def crimes_by_year(df, outpath):
     
 def crimes_by_area(df, outpath):
     print('Plotting crimes per division.')
-    fig = plt.figure(figsize=(10, 8))
+    fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
     df.loc[df.Year != 2020].groupby('AREA NAME').size().plot(kind='bar', ax=ax)
     plt.title('Crimes per Division 2010-2019')
@@ -58,7 +58,7 @@ def crimes_by_area_year(df, outpath):
     
 def arrests_by_year(df, outpath):
     print('Plotting arrest rate over the years.')
-    fig = plt.figure(figsize=(10, 8))
+    fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
     df.loc[df.Year != 2020].groupby('Year')['Arrested'].mean().plot(ax=ax)
     plt.title('Arrest Rate wrt. Total Crimes (2010-2019)')
@@ -82,7 +82,7 @@ def arrests_by_area_year(df, outpath):
     
 def crime_types(df, outpath):
     print('Plotting distribution of crimes.')
-    fig = plt.figure(figsize=(10, 8))
+    fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
     distr = df.loc[df.Year != 2020]['Crime Type'].value_counts(normalize=True)
     plt.pie(distr, labels=distr.index, autopct='%1.1f%%')
