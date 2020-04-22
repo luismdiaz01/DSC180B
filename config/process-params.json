@@ -3,8 +3,7 @@
     "outpath": "data/cleaned",
     "title": ["stops", "arrests", "crime"],
     "cols":[["Stop Number","Sex Code","Descent Description","Stop Date","Stop Time","Officer 1 Serial Number","Officer 1 Division Number","Officer 2 Serial Number","Officer 2 Division Number","Reporting District","Post Stop Activity Indicator"],
-["DR_NO","Date Rptd","AREA NAME","Rpt Dist No","Crm Cd Desc","Vict Age","Vict Sex","Vict Descent","Status Desc","LAT","LON"],
-["Report ID","Arrest Date","Time","Area Name","Reporting District","Age","Sex Code","Descent Code","Charge Group Description","Arrest Type Code","Charge Description","Location"]]
+    ["Report ID","Arrest Date","Time","Area Name","Reporting District","Age","Sex Code","Descent Code","Charge Group Description","Arrest Type Code","Charge Description","Location"],["DR_NO","Date Rptd","Year","AREA NAME","Rpt Dist No","Crime Type","Crime Severity","Crm Cd Desc","Arrested","LAT","LON"]]
 }
 
  
