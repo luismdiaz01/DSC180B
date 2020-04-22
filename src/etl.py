@@ -4,7 +4,11 @@ import os
 def limit_cols(df, cols):
     return df[cols]
 
-def clean_divisions(df, make_dict = True, divs = ['Officer 1 Division Number', 'Officer 2 Division Number'], desc = ['Division Description 1', 'Division Description 2'], name = 'data/cleaned/div.txt'):
+def add_year(df, date = 'Stop Date'):
+    df['Year'] = pd.to_datetime(df[date]).dt.year
+    return df
+
+def clean_divisions(df, make_dict = True, divs = ['Officer 1 Division Number', 'Officer 2 Division Number'], desc = ['Division Description 1', 'Division Description 2'], name = 'div.txt'):
     for j in desc:    
         if j == 'Division Description 1':
             df = df.dropna(subset = [j])
@@ -20,6 +24,11 @@ def clean_divisions(df, make_dict = True, divs = ['Officer 1 Division Number', '
         df[i] = ser
     if make_dict:
         df[['Officer 1 Division Number','Division Description 1']].drop_duplicates().sort_values('Officer 1 Division Number').to_csv(name, header=None, index=None, sep=' ', mode='a')
+    return df
+
+def run_cleaning(df, **kwargs):
+    df = clean_divisions(df)
+    df = add_year(df)
     return df
 
 def get_data(urls, outpath = 'data/raw', title = ['stops', 'arrests', 'crime']):
@@ -38,10 +47,10 @@ def process(paths, outpath = 'data/cleaned' ,title = ['stops', 'arrests', 'crime
     for j,i in enumerate(paths):
         df = pd.read_csv(i)
         if 'stop' in i:
-            df = clean_divisions(df)
+            df = run_cleaning(df)
         if 'cols' in kwargs:
             df = limit_cols(df, cols[j])
         name = './' + outpath + '/'+title[j] + '-processed.csv'
         df.to_csv(name, index = False)
         print("Downloaded: ",name)        
-    return 'Files saved in ' + outpath     
+    return 'Files saved in ' + outpath  
