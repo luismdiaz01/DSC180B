@@ -40,7 +40,7 @@ def limit_cols(df, cols):
 def run_cleaning(df, **kwargs):
     df = clean_divisions(df)
     df = add_year(df)
-    df = df.loc[df['Year'] != 1900]
+    df = df.loc[(df['Year'] != 1900)]
     df['Reporting District'] = impute_districts(df['Reporting District'])
     df['Officer 1 Serial Number'] = df['Officer 1 Serial Number'].fillna(0).astype(int)
     

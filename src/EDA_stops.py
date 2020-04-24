@@ -23,7 +23,7 @@ def generate_viz(inpath='data/cleaned/stops-processed.csv', outpath='viz/EDA/Sto
     stops_post(df, outpath)
 
 # Helper methods
-def describe_null(outpath, rawpath='data/raw/stops.csv', cleanpath='data/cleaned/stop-processed.csv', **kwargs):
+def describe_null(outpath, rawpath='data/raw/stops.csv', cleanpath='data/cleaned/stops-processed.csv', **kwargs):
     raw_data = pd.read_csv(rawpath)
     clean_data = pd.read_csv(cleanpath)
     print('Generating null proportions.')
