@@ -15,6 +15,7 @@ def generate_viz(inpath='data/cleaned/crime-processed.csv', outpath='viz/EDA/Cri
         os.mkdir(outpath)
         
     df = pd.read_csv(inpath)
+    describe_null(outpath)
     crimes_by_year(df, outpath)
     crimes_by_area(df, outpath)
     crimes_by_area_year(df, outpath)
@@ -28,6 +29,14 @@ def generate_viz(inpath='data/cleaned/crime-processed.csv', outpath='viz/EDA/Cri
     crime_tp_by_area_year(df, outpath)
 
 # Helper methods
+def describe_null(outpath, rawpath='data/raw/crime.csv', cleanpath='data/cleaned/crime-processed.csv', **kwargs):
+    raw_data = pd.read_csv(rawpath)
+    clean_data = pd.read_csv(cleanpath)
+    print('Generating null proportions.')
+    raw_data.isna().mean().round(5).to_frame().reset_index().rename(columns={0:'Proportion of Null Values', 'index':'Column Name'}).to_csv(os.path.join(outpath, 'nulls_crime_raw.csv'), index=False)
+    clean_data.isna().mean().round(5).to_frame().reset_index().rename(columns={0:'Proportion of Null Values', 'index':'Column Name'}).to_csv(os.path.join(outpath, 'nulls_crime_clean.csv'), index=False)
+    print('Complete')
+
 def crimes_by_year(df, outpath):
     print('Plotting crimes per year.')
     fig = plt.figure(figsize=(10, 6))

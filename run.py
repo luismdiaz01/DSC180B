@@ -6,7 +6,7 @@ import os
 
 sys.path.insert(0, 'src') # add library code to path
 from etl import get_data, process
-from eda_crimes import generate_viz as gv_crimes
+from EDA_crimes import generate_viz as gv_crimes
 from EDA_stops import generate_viz as gv_stops
 
 # Global constants
