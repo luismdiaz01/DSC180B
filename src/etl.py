@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 from process_crimes import process_crimes
+from process_arrests import process_arrests
 
 # Global constants
 
@@ -23,12 +24,16 @@ def process(paths, cols, outpath = 'data/cleaned' ,title = ['stops', 'arrests', 
     for j,i in enumerate(paths):
         if title[j] == 'crime':
             process_crimes(i, outpath, cols[j])
+        elif title[j] == 'arrests':
+            process_arrests(i, outpath, cols[j])
         else:
             df = pd.read_csv(i)
             if title[j] == 'stops':
+                print('Processing Stops data.')
                 df = run_cleaning(df)
             df = limit_cols(df, cols[j])
             name = './' + outpath + '/'+title[j] + '-processed.csv'
+            print('Exporting as csv.')
             df.to_csv(name, index = False)
             print("Downloaded: ",name)        
     return 'Files saved in ' + outpath
@@ -38,6 +43,7 @@ def limit_cols(df, cols):
     return df[cols]
 
 def run_cleaning(df, **kwargs):
+    print('Reading raw data.')
     df = clean_divisions(df)
     df = add_year(df)
     df = df.loc[(df['Year'] != 1900)]

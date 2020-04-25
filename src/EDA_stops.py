@@ -27,7 +27,7 @@ def generate_viz(inpath='data/cleaned/stops-processed.csv', outpath='viz/EDA/Sto
 
 # Helper methods
 def describe_null(outpath, rawpath='data/raw/stops.csv', cleanpath='data/cleaned/stops-processed.csv', **kwargs):
-    raw_data = pd.read_csv(rawpath)
+    raw_data = pd.read_csv(rawpath).drop(columns=['Unnamed: 0'])
     clean_data = pd.read_csv(cleanpath)
     print('Generating null proportions.')
     raw_data.isna().mean().round(5).to_frame().reset_index().rename(columns={0:'Proportion of Null Values', 'index':'Column Name'}).to_csv(os.path.join(outpath, 'nulls_stops_raw.csv'), index=False)
