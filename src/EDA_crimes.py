@@ -50,7 +50,7 @@ def crimes_by_year(df, outpath):
     
 def crimes_by_area(df, outpath):
     print('Plotting crimes per division.')
-    fig = plt.figure(figsize=(10, 20))
+    fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
     df.loc[df.Year != 2020].groupby('AREA NAME').size().plot(kind='barh', ax=ax)
     plt.title('Crimes per Division 2010-2019')
@@ -62,13 +62,15 @@ def crimes_by_area(df, outpath):
 def crimes_by_area_year(df, outpath):
     print('Plotting crimes per division per year.')
     crimes_by_area_year = df.loc[df.Year != 2020].groupby(['Year', 'AREA NAME']).size().unstack().T
-    fig=plt.figure(figsize=(10,140))
+    fig=plt.figure(figsize=(10,80))
     fig.tight_layout()
     columns = 1
     rows = 10
     for idx, col in enumerate(crimes_by_area_year.columns):
         fig.add_subplot(rows, columns, idx+1)
-        plt.bar(crimes_by_area_year.index, crimes_by_area_year[col])
+        plt.barh(crimes_by_area_year.index, crimes_by_area_year[col])
+        plt.xlabel('Number of Crimes')
+        plt.ylabel('Division')
         plt.title('Number of Crimes in {}'.format(col))
     plt.savefig(os.path.join(outpath, 'crimes_by_area_year.png'), bbox_inches='tight')
     print('Complete.')
@@ -150,10 +152,16 @@ def crime_tp(df, outpath):
     print('Plotting distribution of crime types.')
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
-    df.loc[df.Year != 2020]['Crime Type'].value_counts(normalize=True).plot(kind='barh', ax=ax)
+    distr = df.loc[df.Year != 2020]['Crime Type'].value_counts(normalize=True)
+    patches, texts = plt.pie(distr)
+    labels = ['{0} - {1:1.2f} %'.format(i,j) for i,j in zip(distr.index, distr)]
+    patches, labels, dummy =  zip(*sorted(zip(patches, labels, distr),
+                                          key=lambda x: x[2],
+                                          reverse=True))
+    plt.legend(patches, labels, loc='center left', bbox_to_anchor=(-0.1, 1.),
+           fontsize=8)
+    ax.axis('equal')
     plt.title('Distribution of Crime Types (2010-2019)')
-    plt.xlabel('Proportion')
-    plt.ylabel('Crime Type')
     plt.savefig(os.path.join(outpath, 'tp_distr.png'), bbox_inches='tight')
     print('Complete.')
     
