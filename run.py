@@ -8,6 +8,7 @@ sys.path.insert(0, 'src') # add library code to path
 from etl import get_data, process
 from EDA_crimes import generate_viz as gv_crimes
 from EDA_stops import generate_viz as gv_stops
+from EDA_arrests import generate_viz as gv_arrests
 
 # Global constants
 DATA_PARAMS = 'config/data-params.json'
@@ -16,6 +17,7 @@ PROCESS_PARAMS = 'config/process-params.json'
 #TEST_PROCESS_PARAMS = 'config/test-process-params.json'
 EDA_CRIMES_PARAMS = 'config/eda-crimes-params.json'
 EDA_STOPS_PARAMS = 'config/eda-stops-params.json'
+EDA_ARRESTS_PARAMS = 'config/eda-arrests-params.json'
 
 def load_params(fp):
     with open(fp) as fh:
@@ -68,9 +70,18 @@ def main(targets):
         
         cfg_stops = load_params(EDA_STOPS_PARAMS)    
         cfg_crimes = load_params(EDA_CRIMES_PARAMS)
+        cfg_arrests = load_params(EDA_ARRESTS_PARAMS)
         
         gv_stops(**cfg_stops)
         gv_crimes(**cfg_crimes)
+        gv_arrests(**cfg_arrests)
+        
+    if 'eda_arrests' in targets:
+        if not os.path.exists('viz/EDA'):
+            os.mkdir('viz/EDA')
+
+        cfg_arrests = load_params(EDA_ARRESTS_PARAMS)
+        gv_arrests(**cfg_arrests)
         
     return
 
