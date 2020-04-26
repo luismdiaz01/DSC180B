@@ -19,12 +19,11 @@ PROJECT
 │   └── test-params.json
 │   └── .env
 ├── data
-│   ├── log
-│   ├── out
 │   ├── raw
-│   ├── cleaned
-│   ├── vod
-│   └── temp
+│   └── cleaned
+├── test_data
+│   ├── raw
+│   └── cleaned
 ├── notebooks
 │   └── .gitkeep
 ├── references
