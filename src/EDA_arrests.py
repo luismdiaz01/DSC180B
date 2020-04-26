@@ -8,9 +8,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Global constants
-RACE_MAP = {'B': 'Black','H': 'Hispanic/Latin/Mexican','O': 'Other','W': 'White','A': 'Other Asian','K': 'Korean','F': 'Filipino','V': 'Vietnamese','G': 'Guamanian','C': 'Chinese','X': 'Unknown','P': 'Pacific Islander','S': 'Samoan','J': 'Japanese','I': 'American Indian/Alaskan Native','U': 'Hawaiian','L': 'Laotian','Z': 'Asian Indian','D': 'Cambodian'}
-
-TYPE_MAP = {'D': 'Dependent', 'F': 'Felony', 'I': 'Infraction', 'M': 'Misdemeanor', 'O': 'Other'}
 
 # Main driver functions
 def generate_viz(inpath='data/cleaned/arrests-processed.csv', outpath='viz/EDA/Arrests', **kwargs):
@@ -42,7 +39,6 @@ def rate_by_race(df, outpath):
 #     fig = plt.figure(figsize=(10, 6))
 #     ax = fig.add_subplot(1,1,1)
     AR_race = pd.DataFrame(df.loc[df.Year != 2020].groupby('Descent Code').apply(lambda x: len(x) / df.shape[0]), columns=['Arrest Rate'])
-    AR_race.index = AR_race.index.map(lambda x: RACE_MAP[x])
     AR_race.to_csv(os.path.join(outpath, 'rate_by_race.csv'))
 #     AR_race.plot(kind='barh', ax=ax)
 #     plt.title('Arrest Rates by Race')
@@ -55,7 +51,6 @@ def rate_by_type(df, outpath):
     print('Plotting arrest rates per crime type.')
     AR_type = pd.DataFrame(df.groupby('Arrest Type Code').apply(lambda x: len(x)), columns=['Total Arrests by Type'])
     AR_type['Arrest Rates by Crime Type'] = AR_type['Total Arrests by Type'].apply(lambda x: x / df.shape[0])
-    AR_type['Crime Description'] = AR_type.index.map(lambda x: TYPE_MAP[x])
     AR_type.sort_values(by=['Arrest Rates by Crime Type'], ascending=False).to_csv(os.path.join(outpath, 'rate_by_type.csv'))
     print('Complete.')
     
@@ -79,14 +74,12 @@ def make_pivot(df, col):
 def rate_by_race_pp(df, outpath):
     print('Plotting arrest rates per race.')
     res = make_pivot(df, 'Descent Code')
-    res.index = res.index.map(lambda x: RACE_MAP[x])
     res.to_csv(os.path.join(outpath, 'rate_by_race_pp.csv'))
     print('Complete.')
     
 def rate_by_type_pp(df, outpath):
     print('Plotting arrest rates per crime type.')
     res = make_pivot(df, 'Arrest Type Code')
-    res.index = res.index.map(lambda x: TYPE_MAP[x])
     res.to_csv(os.path.join(outpath, 'rate_by_type_pp.csv'))
     print('Complete.')
     
