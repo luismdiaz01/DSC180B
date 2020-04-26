@@ -15,6 +15,7 @@ def generate_viz(inpath='data/cleaned/crime-processed.csv', outpath='viz/EDA/Cri
         os.mkdir(outpath)
         
     df = pd.read_csv(inpath)
+    describe_null(outpath)
     crimes_by_year(df, outpath)
     crimes_by_area(df, outpath)
     crimes_by_area_year(df, outpath)
@@ -28,14 +29,24 @@ def generate_viz(inpath='data/cleaned/crime-processed.csv', outpath='viz/EDA/Cri
     crime_tp_by_area_year(df, outpath)
 
 # Helper methods
+def describe_null(outpath, rawpath='data/raw/crime.csv', cleanpath='data/cleaned/crime-processed.csv', **kwargs):
+    raw_data = pd.read_csv(rawpath)
+    if 'test_data' in rawpath:
+        raw_data.drop(columns=['Unnamed: 0'], inplace=True)
+    clean_data = pd.read_csv(cleanpath)
+    print('Generating null proportions.')
+    raw_data.isna().mean().round(5).to_frame().reset_index().rename(columns={0:'Proportion of Null Values', 'index':'Column Name'}).to_csv(os.path.join(outpath, 'nulls_crime_raw.csv'), index=False)
+    clean_data.isna().mean().round(5).to_frame().reset_index().rename(columns={0:'Proportion of Null Values', 'index':'Column Name'}).to_csv(os.path.join(outpath, 'nulls_crime_clean.csv'), index=False)
+    print('Complete')
+
 def crimes_by_year(df, outpath):
     print('Plotting crimes per year.')
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
-    df.loc[df.Year != 2020].groupby('Year').size().plot(kind='bar', ax=ax)
+    df.loc[df.Year != 2020].groupby('Year').size().plot(kind='barh', ax=ax)
     plt.title('Crimes by Year')
-    plt.xlabel('Year')
-    plt.ylabel('Number of Crimes')
+    plt.xlabel('Number of Crimes')
+    plt.ylabel('Year')
     plt.savefig(os.path.join(outpath, 'crimes_by_year.png'), bbox_inches='tight')
     print('Complete.')
     
@@ -43,23 +54,25 @@ def crimes_by_area(df, outpath):
     print('Plotting crimes per division.')
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
-    df.loc[df.Year != 2020].groupby('AREA NAME').size().plot(kind='bar', ax=ax)
+    df.loc[df.Year != 2020].groupby('AREA NAME').size().plot(kind='barh', ax=ax)
     plt.title('Crimes per Division 2010-2019')
-    plt.xlabel('Division')
-    plt.ylabel('Number of Crimes')
+    plt.xlabel('Number of Crimes')
+    plt.ylabel('Division')
     plt.savefig(os.path.join(outpath, 'crimes_by_area.png'), bbox_inches='tight')
     print('Complete.')
     
 def crimes_by_area_year(df, outpath):
     print('Plotting crimes per division per year.')
     crimes_by_area_year = df.loc[df.Year != 2020].groupby(['Year', 'AREA NAME']).size().unstack().T
-    fig=plt.figure(figsize=(22,60))
+    fig=plt.figure(figsize=(10,80))
     fig.tight_layout()
     columns = 1
     rows = 10
     for idx, col in enumerate(crimes_by_area_year.columns):
         fig.add_subplot(rows, columns, idx+1)
-        plt.bar(crimes_by_area_year.index, crimes_by_area_year[col])
+        plt.barh(crimes_by_area_year.index, crimes_by_area_year[col])
+        plt.xlabel('Number of Crimes')
+        plt.ylabel('Division')
         plt.title('Number of Crimes in {}'.format(col))
     plt.savefig(os.path.join(outpath, 'crimes_by_area_year.png'), bbox_inches='tight')
     print('Complete.')
@@ -69,8 +82,8 @@ def arrests_by_year(df, outpath):
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
     df.loc[df.Year != 2020].groupby('Year')['Arrested'].mean().plot(ax=ax)
-    plt.title('Arrest Proportion wrt. Total Crimes (2010-2019)')
-    plt.ylabel('Arrest Proportion')
+    plt.title('Proportion of Arrests in Total Crimes (2010-2019)')
+    plt.ylabel('Proportion')
     plt.savefig(os.path.join(outpath, 'arrests_by_year.png'), bbox_inches='tight')
     print('Complete.')
     
@@ -84,7 +97,7 @@ def arrests_by_area_year(df, outpath):
     for idx, col in enumerate(arrest_by_area_year.columns):
         fig.add_subplot(rows, columns, idx+1)
         plt.plot(arrest_by_area_year[col])
-        plt.title('Arrest Proportion in {}'.format(col))
+        plt.title('Proportion of Arrests in {}'.format(col))
     plt.savefig(os.path.join(outpath, 'arrests_by_area_year.png'), bbox_inches='tight')
     print('Complete.')
     
@@ -93,7 +106,13 @@ def crime_sev(df, outpath):
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
     distr = df.loc[df.Year != 2020]['Crime Severity'].value_counts(normalize=True)
-    plt.pie(distr, labels=distr.index, autopct='%1.1f%%')
+    patches, texts = plt.pie(distr)
+    labels = ['{0} - {1:1.2f} %'.format(i,j) for i,j in zip(distr.index, distr)]
+    patches, labels, dummy =  zip(*sorted(zip(patches, labels, distr),
+                                          key=lambda x: x[2],
+                                          reverse=True))
+    plt.legend(patches, labels, loc='center left', bbox_to_anchor=(-0.1, 1.),
+           fontsize=8)
     ax.axis('equal')
     plt.title('Distribution of Crime Severities (2010-2019)')
     plt.savefig(os.path.join(outpath, 'sev_distr.png'), bbox_inches='tight')
@@ -135,10 +154,16 @@ def crime_tp(df, outpath):
     print('Plotting distribution of crime types.')
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
-    df.loc[df.Year != 2020]['Crime Type'].value_counts(normalize=True).plot(kind='bar', ax=ax)
+    distr = df.loc[df.Year != 2020]['Crime Type'].value_counts(normalize=True)
+    patches, texts = plt.pie(distr)
+    labels = ['{0} - {1:1.2f} %'.format(i,j) for i,j in zip(distr.index, distr)]
+    patches, labels, dummy =  zip(*sorted(zip(patches, labels, distr),
+                                          key=lambda x: x[2],
+                                          reverse=True))
+    plt.legend(patches, labels, loc='center left', bbox_to_anchor=(-0.1, 1.),
+           fontsize=8)
+    ax.axis('equal')
     plt.title('Distribution of Crime Types (2010-2019)')
-    plt.xlabel('Crime Type')
-    plt.ylabel('Proportion')
     plt.savefig(os.path.join(outpath, 'tp_distr.png'), bbox_inches='tight')
     print('Complete.')
     

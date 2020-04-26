@@ -1,0 +1,4 @@
+{
+    "inpath": "test_data/cleaned/crime-processed.csv",
+    "outpath": "viz/EDA/Crime"
+}

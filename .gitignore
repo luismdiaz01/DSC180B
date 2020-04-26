@@ -133,3 +133,6 @@ data/
 
 #vizualizations
 viz/
+
+#div.txt generated during data processing
+div.txt
