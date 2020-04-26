@@ -8,7 +8,7 @@ from process_arrests import process_arrests
 # Global constants
 
 # Main driver functions
-def get_data(urls, outpath = 'data/raw', title = ['stops', 'arrests', 'crime']):
+def get_data(urls, outpath = 'data/raw', title = ['stops', 'arrests', 'crime'], **kwargs):
     if not os.path.exists(outpath):
         os.mkdir(outpath)
     for j, i in enumerate(urls):    

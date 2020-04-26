@@ -30,7 +30,9 @@ def generate_viz(inpath='data/cleaned/crime-processed.csv', outpath='viz/EDA/Cri
 
 # Helper methods
 def describe_null(outpath, rawpath='data/raw/crime.csv', cleanpath='data/cleaned/crime-processed.csv', **kwargs):
-    raw_data = pd.read_csv(rawpath).drop(columns=['Unnamed: 0'])
+    raw_data = pd.read_csv(rawpath)
+    if 'test_data' in rawpath:
+        raw_data.drop(columns=['Unnamed: 0'], inplace=True)
     clean_data = pd.read_csv(cleanpath)
     print('Generating null proportions.')
     raw_data.isna().mean().round(5).to_frame().reset_index().rename(columns={0:'Proportion of Null Values', 'index':'Column Name'}).to_csv(os.path.join(outpath, 'nulls_crime_raw.csv'), index=False)
