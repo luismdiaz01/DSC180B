@@ -31,8 +31,8 @@ def describe_null(outpath, rawpath='data/raw/arrests.csv', cleanpath='data/clean
     raw_data = pd.read_csv(rawpath).drop(columns=['Unnamed: 0'])
     clean_data = pd.read_csv(cleanpath)
     print('Generating null proportions.')
-    raw_data.isna().mean().round(5).to_frame().reset_index().rename(columns={0:'Proportion of Null Values', 'index':'Column Name'}).to_csv(os.path.join(outpath, 'nulls_crime_raw.csv'), index=False)
-    clean_data.isna().mean().round(5).to_frame().reset_index().rename(columns={0:'Proportion of Null Values', 'index':'Column Name'}).to_csv(os.path.join(outpath, 'nulls_crime_clean.csv'), index=False)
+    raw_data.isna().mean().round(5).to_frame().reset_index().rename(columns={0:'Proportion of Null Values', 'index':'Column Name'}).to_csv(os.path.join(outpath, 'nulls_arrests_raw.csv'), index=False)
+    clean_data.isna().mean().round(5).to_frame().reset_index().rename(columns={0:'Proportion of Null Values', 'index':'Column Name'}).to_csv(os.path.join(outpath, 'nulls_arrests_clean.csv'), index=False)
     print('Complete')
     
 def rate_by_race(df, outpath):

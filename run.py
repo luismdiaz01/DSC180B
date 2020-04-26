@@ -76,13 +76,6 @@ def main(targets):
         gv_crimes(**cfg_crimes)
         gv_arrests(**cfg_arrests)
         
-    if 'eda_arrests' in targets:
-        if not os.path.exists('viz/EDA'):
-            os.mkdir('viz/EDA')
-
-        cfg_arrests = load_params(EDA_ARRESTS_PARAMS)
-        gv_arrests(**cfg_arrests)
-        
     return
 
 
