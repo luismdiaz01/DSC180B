@@ -3,10 +3,26 @@ from arcgis import *
 import arcgis
 from arcgis import GIS
 
+# Global constants
+CENSUS_MAP = {
+    "H7Z001": "Total",
+    "H7Z003": "White",
+    "H7Z004": "Black or African American",
+    "H7Z005": "American Indian and Alaska Native",
+    "H7Z006": "Asian",
+    "H7Z007": "Native Hawaiian and Other Pacific Islander",
+    "H7Z008": "Other",
+    "H7Z009": "Others",
+    "H7Z010": "Hispanic or Latino"
+}
+
+# Main driver functions
 def read_gis(item_id = '96c4fb36182f409a9b141f3bbaad6ab1', user = None, passw = None):
+    print('Reading GIS data.')
     gis = GIS(username=user, password=passw)
     flayer = gis.content.get(item_id)
     df = pd.DataFrame.spatial.from_layer(flayer.layers[0])
+    print('Complete.')
     return df
 
 def pop_by_div(df, group = "PREC"):
@@ -14,3 +30,17 @@ def pop_by_div(df, group = "PREC"):
     pop['white_pop'] = pop['H7Z003']/ pop['H7Z001']
     pop['minority_pop'] = pop.drop([group,'H7Z001','H7Z002','H7Z003' ], axis = 1).sum(axis =1)/ pop['H7Z001']
     return pop
+
+def get_census(df):
+    print('Generating census data by division.')
+    df = df.rename(columns=CENSUS_MAP)
+    for col in df:
+        if col.startswith('H7'):
+            df.drop(col, axis=1, inplace=True)
+    df['Other'] += df['Others']
+    df = df[['Total', 'White', 'Black or African American',
+           'American Indian and Alaska Native', 'Asian',
+           'Native Hawaiian and Other Pacific Islander', 'Other',
+           'Hispanic or Latino']].sum()
+    print('Complete.')
+    return df

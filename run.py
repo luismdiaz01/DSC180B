@@ -36,12 +36,13 @@ def main(targets):
         
     # make the clean target
     if 'clean' in targets:
-        os.unlink('data/raw')
-        os.unlink('data/cleaned')
-        os.unlink('data/temp')      
-        os.unlink('data/out')     
-        os.unlink('data/test')
-        os.unlink('viz/')
+        shutil.rmtree('data/raw', ignore_errors=True)
+        shutil.rmtree('data/cleaned', ignore_errors=True)
+        shutil.rmtree('viz', ignore_errors=True)
+        
+    if 'clean-test' in targets:
+        shutil.rmtree('test_data/cleaned', ignore_errors=True)
+        shutil.rmtree('viz', ignore_errors=True)
 
     # make the data target
     if 'data' in targets:
@@ -77,7 +78,7 @@ def main(targets):
         gv_stops(**cfg_stops)
         gv_crimes(**cfg_crimes)
         gv_arrests(**cfg_arrests)
-
+    
     return
 
 
