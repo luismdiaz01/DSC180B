@@ -78,6 +78,10 @@ def main(targets):
         gv_crimes(**cfg_crimes)
         gv_arrests(**cfg_arrests)
 
+    if 'eda-arrests' in targets:
+        cfg_arrests = load_params(EDA_ARRESTS_PARAMS)
+        gv_arrests(**cfg_arrests)
+    
     return
 
 

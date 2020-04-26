@@ -36,7 +36,7 @@ def process_crimes(inpath, outpath, cols, title='crime', **kwargs):
     if not os.path.exists(outpath):
         os.mkdir(outpath)
     print('Reading raw data.')
-    crimes = transform_crimes(pd.read_csv(inpath, parse_dates=[2]), cols)
+    crimes = transform_crimes(pd.read_csv(inpath, parse_dates=[1]), cols)
     name = os.path.join(outpath, '{}-processed.csv'.format(title))
     print('Exporting as csv.')
     crimes.to_csv(name, index=False)
