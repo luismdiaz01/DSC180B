@@ -42,7 +42,7 @@ def stops_by_year(df, outpath):
     print('Plotting stops per year.')
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
-    df.loc[(df.Year!=2020)&(df.Year>=2013)].groupby(['Reassigned Officer','Year']).size().unstack().T.plot(kind='bar', ax=ax)
+    df.loc[(df.Year!=2020)].groupby(['Reassigned Officer','Year']).size().unstack().T.plot(kind='bar', ax=ax)
     plt.title('Stops by Year')
     plt.xlabel('Number of Stops')
     plt.ylabel('Year')

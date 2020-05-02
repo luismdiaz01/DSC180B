@@ -34,7 +34,7 @@ def run_cleaning(df, cols, **kwargs):
     df['Reporting District'] = impute_districts(df['Reporting District'])
     df['Officer 1 Serial Number'] = df['Officer 1 Serial Number'].fillna(0).astype(int)
     df = get_stop_div(df, get_gis())
-    df['Reassigned Officer'] = df['Stop Division'] == df['Division Description 1']
+    df['Reassigned Officer'] = (df['Stop Division'] == df['Division Description 1']) & (df['Year'] >= 2013)
     return limit_cols(df.dropna(subset=['Stop Division','Stop Date', 'Reporting District', 'Post Stop Activity Indicator']), cols)
 
 def limit_cols(df, cols):
