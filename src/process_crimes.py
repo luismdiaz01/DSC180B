@@ -78,6 +78,17 @@ def arrest(x):
         return 1
     return 0
 
+def get_pred(year, area):
+    if year < 2013:
+        return 'No PredPol'
+    elif year >= 2015:
+        return 'PredPol'
+    else:
+        if area in ['N Hollywood', 'Southwest', 'Foothill']:
+            return 'PredPol'
+        else:
+            return 'No PredPol'
+
 def transform_crimes(df, cols):
     df['Year'] = df['Date Rptd'].dt.year  
     print('Adding column: Arrested.')
@@ -85,5 +96,6 @@ def transform_crimes(df, cols):
     print('Adding column: Crime Type.')
     df['Crime Type'] = df['Crm Cd Desc'].apply(crm_category)
     print('Adding column: Crime Severity.')
-    df['Crime Severity'] = df['Crm Cd Desc'].apply(classify_crm_cd_desc)
+    df['Crime Charge'] = df['Crm Cd Desc'].apply(classify_crm_cd_desc)
+    df['PredPol Deployed'] = df.apply(lambda x: get_pred(x['Year'], x['AREA NAME']), axis=1)
     return limit_cols(df, cols)    

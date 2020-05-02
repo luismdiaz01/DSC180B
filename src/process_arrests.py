@@ -27,17 +27,17 @@ def get_pred(row):
     # check year
     yr = row.loc['Year']
     if yr < 2013:
-        return 0
+        return 'No PredPol'
     elif yr >= 2015:
-        return 1
+        return 'PredPol'
     else:
         # check area
         ar = row.loc['Area Name']
-        areas = ['North Hollywood', 'Sothwest', 'Foothill']
+        areas = ['North Hollywood', 'Southwest', 'Foothill']
         if ar in areas:
-            return 1
+            return 'PredPol'
         else:
-            return 0
+            return 'No PredPol'
 
 def limit_cols(df, cols):
     return df[cols]
