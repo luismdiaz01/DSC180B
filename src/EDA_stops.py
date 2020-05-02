@@ -44,8 +44,8 @@ def stops_by_year(df, outpath):
     ax = fig.add_subplot(1,1,1)
     df.loc[(df.Year!=2020)].groupby(['Reassigned Officer','Year']).size().unstack().T.plot(kind='bar', ax=ax)
     plt.title('Stops by Year')
-    plt.xlabel('Number of Stops')
-    plt.ylabel('Year')
+    plt.xlabel('Year')
+    plt.ylabel('Number of Stops')
     plt.savefig(os.path.join(outpath, 'stops_by_year.png'), bbox_inches='tight')
     print('Complete.')
     
