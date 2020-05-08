@@ -74,7 +74,7 @@ def test_overall(df, outpath, crime='Type'):
         idx = TYPES
     else:
         idx = CHARGES
-    pd.DataFrame({'Statistic':statvals, 'P-Value':pvals}, index=idx).to_csv(os.path.join(outpath, 'ovr_{}_dist.csv'.format(crime)), index=False)
+    pd.DataFrame({'Statistic':statvals, 'P-Value':pvals}, index=idx).to_csv(os.path.join(outpath, 'ovr_{}_dist.csv'.format(crime)))
     print('Complete.')
     
 def test_by_div(df, outpath, crime='Type'):
@@ -85,6 +85,8 @@ def test_by_div(df, outpath, crime='Type'):
         idx = CHARGES
     types = format_df(df, area=True, crime=crime)
     results = pd.DataFrame()
+    detailed = []
+    divisions = []
     for div, df in types.groupby(level=0):
         print('Analyzing division: ', div)
         new_df = df.T
@@ -107,10 +109,12 @@ def test_by_div(df, outpath, crime='Type'):
                 vals.append(0)
             print('Statistic = ', stat)
             print('P-Value = {}\n'.format(pval))
-        pd.DataFrame({'Statistic':statvals, 'P-Value':pvals}, index=idx).to_csv(os.path.join(outpath, '{}_{}_dist.csv'.format(div, crime)), index=False)
+        detailed.append(pd.DataFrame({'Statistic':statvals, 'P-Value':pvals}, index=idx))
+        divisions.append(div)
         results[div] = vals
         print('-'*20)
         print('')
+    pd.concat(detailed, keys=divisions, names=['Division','Crime {}'.format(crime)]).to_csv(os.path.join(outpath, 'div_{}_detailed.csv'.format(crime)))
     results.set_index(pd.Index(idx), inplace=True)
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
