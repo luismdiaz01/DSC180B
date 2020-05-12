@@ -116,6 +116,7 @@ def test_by_div(df, outpath, crime='Type'):
         print('')
     pd.concat(detailed, keys=divisions, names=['Division','Crime {}'.format(crime)]).to_csv(os.path.join(outpath, 'div_{}_detailed.csv'.format(crime)))
     results.set_index(pd.Index(idx), inplace=True)
+    results.T.to_csv(os.path.join(outpath, 'div_{}_dist.csv'.format(crime)))
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
     sns.heatmap(results.T, annot=False, xticklabels=True, yticklabels=True, ax=ax)
