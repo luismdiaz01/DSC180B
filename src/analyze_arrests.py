@@ -140,16 +140,15 @@ def test_by_div(df, outpath, arrest='Charge Group Description'):
     results.set_index(pd.Index(idx), inplace=True)
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
-    sns.heatmap(results.T, annot=False, xticklabels=True, yticklabels=True, ax=ax)
+    sns.heatmap(results.T, annot=False, xticklabels=True, yticklabels=True, ax=ax, vmin=-1, vmax=1)
     plt.title('T-Test Results of {} Distribution by Division'.format(curr))
     plt.xlabel(curr)
     plt.ylabel('Division')
     plt.savefig(os.path.join(outpath, 'div_{}_dist.png'.format(curr)), bbox_inches='tight')
     #print('Complete.')
-    
-    
-sys.path.insert(0, '../src/')
-inpath = '../data/cleaned/arrests-processed.csv'
-outpath = '../viz/Analysis/Arrest'
+     
+# sys.path.insert(0, '../src/')
+# inpath = '../data/cleaned/arrests-processed.csv'
+# outpath = '../viz/Analysis/Arrest'
 
-analyze(inpath, outpath)
+# analyze(inpath, outpath)

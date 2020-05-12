@@ -119,7 +119,7 @@ def test_by_div(df, outpath, crime='Type'):
     results.T.to_csv(os.path.join(outpath, 'div_{}_dist.csv'.format(crime)))
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
-    sns.heatmap(results.T, annot=False, xticklabels=True, yticklabels=True, ax=ax)
+    sns.heatmap(results.T, annot=False, xticklabels=True, yticklabels=True, ax=ax, vmin=-1, vmax=1)
     plt.title('T-Test Results of Crime {} Distribution by Division'.format(crime))
     plt.xlabel('Crime {}'.format(crime))
     plt.ylabel('Division')

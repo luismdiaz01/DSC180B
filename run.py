@@ -9,7 +9,8 @@ from etl import get_data, process
 from EDA_crimes import generate_viz as gv_crimes
 from EDA_stops import generate_viz as gv_stops
 from EDA_arrests import generate_viz as gv_arrests
-from analyze_crimes import analyze
+from analyze_crimes import analyze as an_crimes
+from analyze_arrests import analyze as an_arrests
 
 # Global constants
 DATA_PARAMS = 'config/data-params.json'
@@ -22,6 +23,7 @@ TEST_EDA_STOPS_PARAMS = 'config/test-eda-stops-params.json'
 EDA_ARRESTS_PARAMS = 'config/eda-arrests-params.json'
 TEST_EDA_ARRESTS_PARAMS = 'config/test-eda-arrests-params.json'
 ANALYZE_CRIMES_PARAMS = 'config/analyze-crimes-params.json'
+ANALYZE_ARRESTS_PARAMS = 'config/analyze-arrests-params.json'
 
 def load_params(fp):
     with open(fp) as fh:
@@ -72,8 +74,10 @@ def main(targets):
             os.mkdir('viz/Analysis')
             
         cfg_crimes = load_params(ANALYZE_CRIMES_PARAMS)
+        cfg_arrests = load_params(ANALYZE_ARRESTS_PARAMS)
         
-        analyze(**cfg_crimes)
+        an_crimes(**cfg_crimes)
+        an_arrests(**cfg_arrests)
     
     if 'test' in targets:
         process_cfg = load_params(TEST_PROCESS_PARAMS)
