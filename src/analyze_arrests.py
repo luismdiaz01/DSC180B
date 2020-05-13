@@ -11,18 +11,9 @@ from random import choices
 from scipy import stats
 
 # Global constants
-CHARGE_GROUP = ['Burglary', 'Disorderly Conduct', 'Robbery',
-       'Weapon (carry/poss)', 'Miscellaneous Other Violations',
-       'Other Assaults', 'Aggravated Assault', 'Forgery/Counterfeit',
-       'Rape', 'Narcotic Drug Laws', 'Vehicle Theft', 'Larceny',
-       'Driving Under Influence', 'Sex (except rape/prst)',
-       'Receive Stolen Property', 'Moving Traffic Violations',
-       'Fraud/Embezzlement', 'Non-Criminal Detention',
-       'Prostitution/Allied', 'Gambling', 'Liquor Laws',
-       'Against Family/Child', 'Drunkeness', 'Homicide',
-       'Disturbing the Peace', 'Federal Offenses', 'Pre-Delinquency']
+CHARGE_GROUP = ['Financial/Other','Inchoate','Personal','Property','Statutory']
 
-ARREST_TYPE = ['Felony', 'Misdemeanor', 'Dependent', 'Infraction', 'Other']
+ARREST_TYPE = ['Dependent', 'Felony', 'Misdemeanor', 'Infraction', 'Other']
 
 # Main driver functions
 def analyze(inpath, outpath):

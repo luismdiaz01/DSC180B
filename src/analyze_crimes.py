@@ -12,7 +12,7 @@ from scipy import stats
 
 # Global constants
 TYPES = ['Financial/Other','Inchoate','Personal','Property','Statutory']
-CHARGES = ['Felony','Infraction','Misdemeanor','Others','Wobbler','Wobblette']
+CHARGES = ['Dependent','Felony','Infraction','Misdemeanor','Others']
 
 # Main driver functions
 def analyze(inpath, outpath):

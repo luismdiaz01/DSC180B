@@ -7,6 +7,14 @@ RACE_MAP = {'B': 'Black or African American','H': 'Hispanic or Latino','O': 'Oth
 
 TYPE_MAP = {'D': 'Dependent', 'F': 'Felony', 'I': 'Infraction', 'M': 'Misdemeanor', 'O': 'Other'}
 
+PERSONAL = ['Aggravated Assault', 'Prostitution/Allied', 'Sex (except rape/prst)', 'Other Assaults', 'Homicide', 'Weapon (carry/poss)', 'Against Family/Child', 'Non-Criminal Detention', 'Rape', ]
+
+PROPERTY = ['Robbery', 'Burglary', 'Larceny', 'Receive Stolen Property', 'Vehicle Theft', ]
+
+INCHOATE = ['Gambling', 'Pre-Delinquency']
+
+STATUTORY = ['Liquor Laws','Driving Under Influence', 'Miscellaneous Other Violations', 'Disorderly Conduct', 'Drunkeness', 'Narcotic Drug Laws', 'Disturbing the Peace', 'Moving Traffic Violations', 'Federal Offenses']
+
 # Main driver functions
 def process_arrests(inpath, outpath, cols, title='arrests', **kwargs):
     print('Processing Arrests data.')
@@ -38,6 +46,20 @@ def get_pred(row):
             return 'PredPol'
         else:
             return 'No PredPol'
+        
+def crm_category(x):
+    try:
+        if any(substring in x for substring in INCHOATE):
+            return 'Inchoate'
+        elif any(substring in x for substring in PROPERTY):
+            return 'Property'
+        elif any(substring in x for substring in PERSONAL):
+            return 'Personal'
+        elif any(substring in x for substring in STATUTORY):
+            return 'Statutory'
+        return 'Financial/Other'
+    except TypeError:
+        return 'Financial/Other'
 
 def limit_cols(df, cols):
     return df[cols]
@@ -47,6 +69,7 @@ def transform_arrests(df, cols):
     df['Arrest Date'] = pd.to_datetime(df['Arrest Date'])
     df['Year'] = df['Arrest Date'].apply(lambda x: x.year)
     df['Descent Code'] = df['Descent Code'].map(RACE_MAP)
+    df['Charge Group Description'] = df['Charge Group Description'].apply(crm_category)
     df['Arrest Type Code'] = df['Arrest Type Code'].map(TYPE_MAP)
     df['predPol Deployed'] = df.apply(get_pred, axis=1)
     df['Total'] = pd.Series([1] * df.shape[0])

@@ -14,11 +14,9 @@ FELONY = ['felony','aggravated assault','grand','train wreck','manslaughter','in
       'sex,unlawful','arson','foreign object','extortion','dwelling','kidnap','assault with dead','$950.01 & over','traffick',
       'pimping','pandering','homicide','chld']
 
-WOBBLER = ['dwoc','bigamy','theft','telephone property','conspiracy','burglary','discharge','stalk','oral copulation','throwing',
+DEPENDENT = ['dwoc','bigamy','theft','telephone property','conspiracy','burglary','discharge','stalk','oral copulation','throwing',
       'sodomy','computer','cruelty','false imprisonment','counterfeit','false police report','battery on a firefighter',
-      'shots fired at moving','weapons possession','stolen','snatch']
-
-WOBBLETTE = ['disturbing',]
+      'shots fired at moving','weapons possession','stolen','snatch','disturbing',]
 
 PERSONAL = ['assault','battery','arson','abuse','kidnap','rape','homicide','manslaughter','brandish','child','chld','sex',
            'oral','stalk','traffick','discharge','peep','pimp','abortion','lynch']
@@ -51,10 +49,8 @@ def classify_crm_cd_desc(x):
         return 'Misdemeanor'
     elif any(substring in lowered for substring in FELONY):
         return 'Felony'
-    elif any(substring in lowered for substring in WOBBLER):
-        return 'Wobbler'
-    elif any(substring in lowered for substring in WOBBLETTE):
-        return 'Wobblette'
+    elif any(substring in lowered for substring in DEPENDENT):
+        return 'Dependent'
     else:
         return 'Others'
     
