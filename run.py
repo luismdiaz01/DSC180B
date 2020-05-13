@@ -28,10 +28,9 @@ ANALYZE_ARRESTS_PARAMS = 'config/analyze-arrests-params.json'
 def load_params(fp):
     with open(fp) as fh:
         param = json.load(fh)
-
     return param
 
-
+# Main driver
 def main(targets):
     if not os.path.exists('data/'):
         os.mkdir('data/')
