@@ -24,6 +24,8 @@ EDA_ARRESTS_PARAMS = 'config/eda-arrests-params.json'
 TEST_EDA_ARRESTS_PARAMS = 'config/test-eda-arrests-params.json'
 ANALYZE_CRIMES_PARAMS = 'config/analyze-crimes-params.json'
 ANALYZE_ARRESTS_PARAMS = 'config/analyze-arrests-params.json'
+TEST_ANALYZE_CRIMES_PARAMS = 'config/test-analyze-crimes-params.json'
+TEST_ANALYZE_ARRESTS_PARAMS = 'config/test-analyze-arrests-params.json'
 
 def load_params(fp):
     with open(fp) as fh:
@@ -43,6 +45,7 @@ def main(targets):
         shutil.rmtree('data/cleaned', ignore_errors=True)
         shutil.rmtree('viz', ignore_errors=True)
         
+    # make the clean test target
     if 'clean-test' in targets:
         shutil.rmtree('test_data/cleaned', ignore_errors=True)
         shutil.rmtree('viz', ignore_errors=True)
@@ -78,7 +81,7 @@ def main(targets):
         an_crimes(**cfg_crimes)
         an_arrests(**cfg_arrests)
     
-    if 'test' in targets:
+    if 'test-project' in targets:
         process_cfg = load_params(TEST_PROCESS_PARAMS)
         process(**process_cfg)
         if not os.path.exists('viz/EDA'):
@@ -94,6 +97,12 @@ def main(targets):
         gv_stops(**cfg_stops)
         gv_crimes(**cfg_crimes)
         gv_arrests(**cfg_arrests)
+        
+        cfg_crimes = load_params(TEST_ANALYZE_CRIMES_PARAMS)
+        cfg_arrests = load_params(TEST_ANALYZE_ARRESTS_PARAMS)
+        
+        an_crimes(**cfg_crimes)
+        an_arrests(**cfg_arrests)
     
     return
 

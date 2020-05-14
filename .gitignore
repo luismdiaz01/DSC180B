@@ -131,6 +131,9 @@ dmypy.json
 #data 
 data/
 
+#cleaned test data
+test_data/cleaned
+
 #vizualizations
 viz/
 
