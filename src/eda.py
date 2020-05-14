@@ -37,7 +37,12 @@ def generate_viz(rawpaths, inpaths, outpaths, **kwargs):
         elif 'arrests' in rawpath:
             census = get_census(read_gis())
             plot_graph(pivot_df(df, ['Year'], 'Descent Code', 'Total', sum, census), outpath, 'line', 'Arrest Rates by Race', 'Year', 'Rate')
-        # stops_post(df, outpath)
+            plot_graph(pivot_df(df, ['Year'], 'Descent Code', 'Total', sum, census), outpath, 'line', 'Arrest Rates by Race', 'Year', 'Rate')
+            plot_graph(group_df_census(df, census, 'Arrest Type Code', 'Total Arrests by Type'), outpath, 'barh', 'Arrest Rates by Crime Type', 'Rate', 'Arrest Type')
+            plot_graph(group_df_census(df, census, 'Charge Group Description', 'Total Arrests by Charge Group Description'), outpath, 'barh', 'Arrest Rates by Charge', 'Rate', 'Charge')
+            plot_graph(pivot_df_census(df, census, 'Descent Code'), outpath, 'barh', 'Arrest Rates by Race in PredPol vs non-PredPol Areas', 'Rate', 'Race')
+            plot_graph(pivot_df_census(df, census, 'Arrest Type Code'), outpath, 'barh', 'Arrest Rates by Crime Type in PredPol vs non-PredPol Areas', 'Rate', 'Type')
+            plot_graph(pivot_df_census(df, census, 'Charge Group Description'), outpath, 'barh', 'Arrest Rates by Charge in PredPol vs non-PredPol Areas', 'Rate', 'Charge')
 
 # Helper methods
 def describe_null(outpath, rawpath, cleanpath, **kwargs):
@@ -68,6 +73,11 @@ def group_df(df, group, how, ppcol=None, ppbool=None, normalized=False, valuecol
         return result/result.sum()
     return result
 
+def group_df_census(df, census, group, col):
+    types = pd.DataFrame(df.groupby(group).apply(lambda x: len(x)), columns=[col])
+    types[col] = types[col].apply(lambda x: x / census['Total'])
+    return types.sort_values(by=[col], ascending=True)[col]
+
 def pivot_df(df, index, columns, values, aggfunc, census=None):
     if census is not None:
         rates = df.loc[df.Year!=2020].pivot_table(index=index, columns=columns, values=values, aggfunc=aggfunc)
@@ -75,6 +85,13 @@ def pivot_df(df, index, columns, values, aggfunc, census=None):
             rates[col] /= census[col]
         return rates
     return df.loc[df.Year!=2020].pivot_table(index=index, columns=columns, values=values, aggfunc=aggfunc)
+
+def pivot_df_census(df, census, col):
+    def arrest_rates():
+        return lambda x: sum(x) / census['Total']
+
+    return pivot_df(df, values='Total', index=[col],
+                    columns=['predPol Deployed'], aggfunc=arrest_rates())
 
 def plot_graph(df, outpath, how, title, xlabel, ylabel):
     print('Plotting {}'.format(title))
