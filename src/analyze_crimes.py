@@ -95,6 +95,7 @@ def test_by_div(df, outpath, crime='Type'):
         statvals = []
         for tp, row in new_df.iterrows():
             print('Crime {}: {}'.format(crime, tp))
+            print(row)
             stat, pval = test(tp, row[1], row[0])
             pvals.append(pval)
             statvals.append(stat)
