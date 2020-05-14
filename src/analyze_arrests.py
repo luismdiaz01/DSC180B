@@ -89,25 +89,28 @@ def test_by_div(df, outpath, arrest='Charge Group Description'):
         
     if arrest == 'Arrest Type Code':
         idx = ARREST_TYPE
-        #print('Testing distribution of Arrest Types per division.')
+        print('Testing distribution of Arrest Types per division.')
 
     else:
         idx = CHARGE_GROUP
-        #print('Testing distribution of Arrest Charge Types per division.')
+        print('Testing distribution of Arrest Charge Types per division.')
 
     types = format_df(df, True, arrest=arrest)
     results = pd.DataFrame()
     detailed = []
     divisions = []
     for div, df in types.groupby(level=0):
-        #print('Analyzing division: ', div)
+        print('Analyzing division: ', div)
         new_df = df.T
         vals = []
         pvals = []
         statvals = []
         for tp, row in new_df.iterrows():
-            #print('Arrest Type: {}'.format(tp))
-            stat, pval = test(tp, row[1], row[0])
+            print('Arrest Type: {}'.format(tp))
+            try:
+                stat, pval = test(tp, row[1], row[0])
+            except IndexError: # For test data, some have null values
+                stat, pval = 0, 0
             pvals.append(pval)
             statvals.append(stat)
             if pval <= 0.05:
@@ -119,13 +122,13 @@ def test_by_div(df, outpath, arrest='Charge Group Description'):
                     vals.append(0)
             else:
                 vals.append(0)
-            #print('Statistic = ', stat)
-            #print('P-Value = {}\n'.format(pval))
+            print('Statistic = ', stat)
+            print('P-Value = {}\n'.format(pval))
         detailed.append(pd.DataFrame({'Statistic':statvals, 'P-Value':pvals}, index=idx))
         divisions.append(div)
         results[div] = vals
-        #print('-'*20)
-        #print('')
+        print('-'*20)
+        print('')
     pd.concat(detailed, keys=divisions, names=['Division','{}'.format(curr)]).to_csv(os.path.join(outpath, 'div_{}_detailed.csv'.format(curr)))
 
     results.set_index(pd.Index(idx), inplace=True)
@@ -136,10 +139,4 @@ def test_by_div(df, outpath, arrest='Charge Group Description'):
     plt.xlabel(curr)
     plt.ylabel('Division')
     plt.savefig(os.path.join(outpath, 'div_{}_dist.png'.format(curr)), bbox_inches='tight')
-    #print('Complete.')
-     
-# sys.path.insert(0, '../src/')
-# inpath = '../data/cleaned/arrests-processed.csv'
-# outpath = '../viz/Analysis/Arrest'
-
-# analyze(inpath, outpath)
+    print('Complete.')
