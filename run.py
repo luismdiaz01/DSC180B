@@ -8,6 +8,7 @@ sys.path.insert(0, 'src') # add library code to path
 from etl import get_data, process
 from eda import generate_viz
 from analyze import analyze
+from analyze_stops import analyze as analyze_stop
 
 # Global constants
 DATA_PARAMS = 'config/data-params.json'
@@ -17,6 +18,7 @@ EDA_PARAMS = 'config/eda-params.json'
 TEST_EDA_PARAMS = 'config/test-eda-params.json'
 ANALYZE_PARAMS = 'config/analyze-params.json'
 TEST_ANALYZE_PARAMS = 'config/test-analyze-params.json'
+ANALYZE_STOPS_PARAMS = 'config/analyze-stops-params.json'
 
 def load_params(fp):
     with open(fp) as fh:
@@ -63,6 +65,9 @@ def main(targets):
             
         cfg = load_params(ANALYZE_PARAMS)
         analyze(**cfg)
+        
+        cfg_stops = load_params(ANALYZE_STOPS_PARAMS)
+        analyze_stop(**cfg_stops)
     
     if 'test-project' in targets:
         process_cfg = load_params(TEST_PROCESS_PARAMS)
