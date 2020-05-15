@@ -5,16 +5,22 @@ Link to the GIS map can be found at https://arcg.is/1CmX0r
 
 ## Usage Instructions
 
-* Description of targets and using `run.py`
-** Test
+To replicate the entire (or subsets of the) project, copy and paste `python run.py` in the command line while in the root directory followed by the arguments below:
+* `data`: Ingests raw data from online sources.
+* `process`: Runs the pipeline for cleaning and formatting raw datasets.
+* `eda`: Performs exploratory data analysis and outputs visualizations.
+* `analyze`: Performs statistical tests on differences in observed proportions between PredPol and non-PredPol instances.
+* `test-project`: Runs the entire pipeline from start to end on a smaller, versioned test data.
+
+For example, running the code below would reproduce the entire project:
+
+`python run.py data process eda analyze`
 
 ## Description of Contents
 
 The project consists of these portions:
 ```
 PROJECT
-├── .gitignore
-├── README.md
 ├── config
 │   ├── data-params.json
 │   └── test-params.json
@@ -22,17 +28,20 @@ PROJECT
 ├── data
 │   ├── raw
 │   └── cleaned
-├── test_data
-│   ├── raw
-│   └── cleaned
 ├── notebooks
 │   └── .gitkeep
 ├── references
 │   └── .gitkeep
-├── requirements.txt
-├── run.py
 └── src
     └── etl.py
+├── test_data
+│   ├── raw
+│   └── cleaned
+├── .gitignore
+├── Dockerfile
+├── README.md
+├── requirements.txt
+├── run.py
 ```
 
 ### `src`
