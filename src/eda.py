@@ -29,9 +29,9 @@ def generate_viz(rawpaths, inpaths, outpaths, **kwargs):
             plot_graph(group_df(df, 'Reassigned Officer', 'value', valuecol='Post Stop Activity Indicator'), outpath, 'bar', 'Distribution of Stops with Further Actions (2010-2019)', 'Post Stop Activity Indicator', 'Proportion')
         elif 'crime' in rawpath:
             plot_graph(group_df(df, ['PredPol Deployed','Year'], 'size'), outpath, 'bar', 'Number of Crimes by Year', 'Year', 'Number of Crimes')
-            plot_graph(group_df(df, ['Year','AREA NAME'], 'size'), outpath, 'heat', 'Number of crimes per Division (2010-2019)', 'Year', 'Stop Division')
+            plot_graph(group_df(df, ['Year','Area Name'], 'size'), outpath, 'heat', 'Number of crimes per Division (2010-2019)', 'Year', 'Stop Division')
             plot_graph(group_df(df, ['PredPol Deployed','Year'], 'mean', valuecol='Arrested'), outpath, 'bar', 'Proportion of Crimes Resulting in Arrests (2010-2019)', 'Year', 'Proportion')
-            plot_graph(group_df(df, ['Year','AREA NAME'], 'mean', valuecol='Arrested'), outpath, 'heat', 'Proportion of Crimes Resulting in Arrests per Division', 'Year', 'Stop Division')
+            plot_graph(group_df(df, ['Year','Area Name'], 'mean', valuecol='Arrested'), outpath, 'heat', 'Proportion of Crimes Resulting in Arrests per Division', 'Year', 'Stop Division')
             plot_graph(group_df(df, 'PredPol Deployed', 'value', valuecol='Crime Charge'), outpath, 'barh', 'Distribution of Crime Charge (2010-2019)', 'Proportion', 'Year')
             plot_graph(group_df(df, 'PredPol Deployed', 'value', valuecol='Crime Type'), outpath, 'barh', 'Distribution of Crime Type (2010-2019)', 'Proportion', 'Year')
         elif 'arrests' in rawpath:
@@ -91,7 +91,7 @@ def pivot_df_census(df, census, col):
         return lambda x: sum(x) / census['Total']
 
     return pivot_df(df, values='Total', index=[col],
-                    columns=['predPol Deployed'], aggfunc=arrest_rates())
+                    columns=['PredPol Deployed'], aggfunc=arrest_rates())
 
 def plot_graph(df, outpath, how, title, xlabel, ylabel):
     print('Plotting {}'.format(title))

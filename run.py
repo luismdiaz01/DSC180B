@@ -7,8 +7,7 @@ import os
 sys.path.insert(0, 'src') # add library code to path
 from etl import get_data, process
 from eda import generate_viz
-from analyze_crimes import analyze as an_crimes
-from analyze_arrests import analyze as an_arrests
+from analyze import analyze
 
 # Global constants
 DATA_PARAMS = 'config/data-params.json'
@@ -16,10 +15,8 @@ PROCESS_PARAMS = 'config/process-params.json'
 TEST_PROCESS_PARAMS = 'config/test-process-params.json'
 EDA_PARAMS = 'config/eda-params.json'
 TEST_EDA_PARAMS = 'config/test-eda-params.json'
-ANALYZE_CRIMES_PARAMS = 'config/analyze-crimes-params.json'
-ANALYZE_ARRESTS_PARAMS = 'config/analyze-arrests-params.json'
-TEST_ANALYZE_CRIMES_PARAMS = 'config/test-analyze-crimes-params.json'
-TEST_ANALYZE_ARRESTS_PARAMS = 'config/test-analyze-arrests-params.json'
+ANALYZE_PARAMS = 'config/analyze-params.json'
+TEST_ANALYZE_PARAMS = 'config/test-analyze-params.json'
 
 def load_params(fp):
     with open(fp) as fh:
@@ -64,11 +61,8 @@ def main(targets):
         if not os.path.exists('viz/Analysis'):
             os.mkdir('viz/Analysis')
             
-        cfg_crimes = load_params(ANALYZE_CRIMES_PARAMS)
-        cfg_arrests = load_params(ANALYZE_ARRESTS_PARAMS)
-        
-        an_crimes(**cfg_crimes)
-        an_arrests(**cfg_arrests)
+        cfg = load_params(ANALYZE_PARAMS)
+        analyze(**cfg)
     
     if 'test-project' in targets:
         process_cfg = load_params(TEST_PROCESS_PARAMS)
@@ -83,11 +77,8 @@ def main(targets):
         
         generate_viz(**eda_cfg)
         
-        cfg_crimes = load_params(TEST_ANALYZE_CRIMES_PARAMS)
-        cfg_arrests = load_params(TEST_ANALYZE_ARRESTS_PARAMS)
-        
-        an_crimes(**cfg_crimes)
-        an_arrests(**cfg_arrests)
+        analyze_cfg = load_params(TEST_ANALYZE_PARAMS)
+        analyze(**analyze_cfg)
     
     return
 

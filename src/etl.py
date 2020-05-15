@@ -74,6 +74,7 @@ def transform_crimes(df, cols):
     df['Crime Type'] = df['Crm Cd Desc'].apply(classify_type)
     df['Crime Charge'] = df['Crm Cd Desc'].apply(classify_charge)
     df['PredPol Deployed'] = df.apply(lambda x: get_predpol(x['Year'], x['AREA NAME']), axis=1)
+    df.rename(columns={'AREA NAME': 'Area Name'}, inplace=True)
     return limit_cols(df, cols)
 
 def transform_arrests(df, cols):
@@ -82,7 +83,7 @@ def transform_arrests(df, cols):
     df['Descent Code'] = df['Descent Code'].map(RACES)
     df['Charge Group Description'] = df['Charge Group Description'].apply(classify_arrest)
     df['Arrest Type Code'] = df['Arrest Type Code'].map(ARREST_CHARGES)
-    df['predPol Deployed'] = df.apply(lambda x: get_predpol(x['Year'], x['Area Name']), axis=1)
+    df['PredPol Deployed'] = df.apply(lambda x: get_predpol(x['Year'], x['Area Name']), axis=1)
     df['Total'] = pd.Series([1] * df.shape[0])
     return limit_cols(df, cols)
 
