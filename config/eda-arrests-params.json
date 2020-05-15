@@ -1,4 +1,0 @@
-{
-    "inpath": "data/cleaned/arrests-processed.csv",
-    "outpath": "viz/EDA/Arrests"
-}

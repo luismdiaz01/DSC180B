@@ -1,4 +1,0 @@
-{
-    "inpath": "test_data/cleaned/stops-processed.csv",
-    "outpath": "viz/EDA/Stops"
-}
