@@ -68,7 +68,7 @@ PROJECT
 ├── run.py
 ```
 
-### `config`
+### `config/`
 
 * `data-params.json`: Common parameters for getting data, serving as
   inputs to library code.
@@ -78,29 +78,29 @@ PROJECT
 * `env.json`: Parameters for loading virtual environment.
 * Also contains similar configurations for test data.
   
-### `data`
+### `data/`
 
-* `raw`: Raw datasets from original source.
-* `cleaned`: Cleaned datasets.
+* `raw/`: Raw datasets from original source.
+* `cleaned/`: Cleaned datasets.
 
-### `notebooks`
+### `notebooks/`
 
 * Jupyter notebooks for *analyses* and *code development*
   - notebooks will be removed after migration to library code.
 
-### `references`
+### `references/`
 
 * Data Dictionaries, references to external sources.
 
-### `src`
+### `src/`
 
 * `etl.py`: Library code that executes tasks useful for getting data.
 
-### `test_data`
+### `test_data/`
 
 * Versioned test data.
 
-### `viz`
+### `viz/`
 
 * Visual outputs from EDA and analyses pipelines.
 
