@@ -95,7 +95,7 @@ def add_year(df, date = 'Stop Date'):
     df['Year'] = pd.to_datetime(df[date]).dt.year
     return df
 
-def clean_divisions(df, make_dict = True, divs = ['Officer 1 Division Number', 'Officer 2 Division Number'], desc = ['Division Description 1', 'Division Description 2'], name = 'div.txt'):
+def clean_divisions(df, make_dict = True, divs = ['Officer 1 Division Number', 'Officer 2 Division Number'], desc = ['Division Description 1', 'Division Description 2']):
     for j in desc:    
         if j == 'Division Description 1':
             df = df.dropna(subset = [j])
@@ -110,7 +110,7 @@ def clean_divisions(df, make_dict = True, divs = ['Officer 1 Division Number', '
         ser = pd.to_numeric(df[i], errors = 'ignore')
         df[i] = ser
     if make_dict:
-        df[['Officer 1 Division Number','Division Description 1']].drop_duplicates().sort_values('Officer 1 Division Number').to_csv(name, header=None, index=None, sep=' ', mode='a')
+        df[['Officer 1 Division Number','Division Description 1']].drop_duplicates().sort_values('Officer 1 Division Number')
     return df
 
 def is_int(x):
