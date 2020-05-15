@@ -1,11 +1,12 @@
 # DSC180B
-Exploring Predictive Policing in San Diego for DSC180B capstone project
+Exploring Predictive Policing in San Diego for DSC180B Capstone Project
+
+Link to the GIS map can be found at https://arcg.is/1CmX0r
 
 ## Usage Instructions
 
 * Description of targets and using `run.py`
-
-Links to the GIS map can be found at https://arcg.is/1CmX0r
+** Test
 
 ## Description of Contents
 
