@@ -23,15 +23,27 @@ The project consists of these portions:
 PROJECT
 ├── config
 │   ├── data-params.json
-│   └── test-params.json
-│   └── .env
+│   └── process-params.json
+│   └── eda-params.json
+│   └── analyze-params.json
+│   └── test-data-params.json
+│   └── test-process-params.json
+│   └── test-eda-params.json
+│   └── test-analyze-params.json
+│   └── env.json
 ├── data
 │   ├── raw
 │   └── cleaned
 ├── notebooks
 │   └── .gitkeep
 ├── references
-│   └── .gitkeep
+│   └── arrest_charges.json
+│   └── arrest_types.json
+│   └── crime_charges.json
+│   └── crime_types.json
+│   └── divisions_mapper.json
+│   └── nhgis0005_ds172_2010_block_codebook.txt
+│   └── races.json
 └── src
     └── etl.py
 ├── test_data
