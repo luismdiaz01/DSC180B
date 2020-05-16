@@ -1,6 +1,8 @@
 # DSC180B
 Exploring Predictive Policing in San Diego for DSC180B Capstone Project
 
+[Here](https://chuanyuanyeh.github.io/predpol_study/) is the link to the website.
+
 Link to the GIS map can be found at https://arcg.is/1CmX0r
 
 ## Usage Instructions
