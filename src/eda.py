@@ -109,7 +109,7 @@ def plot_graph(df, outpath, how, title, xlabel, ylabel):
         patches, labels, dummy =  zip(*sorted(zip(patches, labels, df), key=lambda x: x[2], reverse=True))
         plt.legend(patches, labels, loc='center left', bbox_to_anchor=(-0.1, 1.), fontsize=8)
         ax.axis('equal')
-    plt.title(title, fontsize=30)
+    plt.title(title, fontsize=25)
     if xlabel is not None:
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
