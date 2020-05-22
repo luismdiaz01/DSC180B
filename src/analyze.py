@@ -30,16 +30,22 @@ def analyze(types, inpaths, outpaths):
         for t in tp:
             test_overall(df, outpath, feat=t)
             test_by_div(df, outpath, feat=t)
+            test_overall(df, outpath, feat=t, scope=True)
+            test_by_div(df, outpath, feat=t, scope=True)
 
 # Helper methods
-def format_df(df, feat, area=False, group='PredPol Deployed', group2=['Area Name', 'PredPol Deployed']):
+def format_df(df, feat, scope=False, area=False, group='PredPol Deployed', group2=['Area Name', 'PredPol Deployed']):
     if feat == 'Descent Description':
         group = 'Reassigned Officer'
         group2 = ['Stop Division', 'Reassigned Officer']
-    if not area:
-        return df.loc[df.Year != 2020].groupby(group)[feat].value_counts(normalize=True).unstack().T
+    if scope:
+        df = df.loc[(df.Year >= 2013) & (df.Year <= 2014)]
     else:
-        return df.loc[df.Year != 2020].groupby(group2)[feat].value_counts(normalize=True).unstack()
+        df = df.loc[df.Year != 2020]
+    if not area:
+        return df.groupby(group)[feat].value_counts(normalize=True).unstack().T
+    else:
+        return df.groupby(group2)[feat].value_counts(normalize=True).unstack()
 
 def test(crime_tp, prop_pp, prop_nonpp, pct_pp=0.562854, n=100000):
     """
@@ -67,9 +73,9 @@ def test(crime_tp, prop_pp, prop_nonpp, pct_pp=0.562854, n=100000):
     
     return res.statistic, res.pvalue
 
-def test_overall(df, outpath, feat):
+def test_overall(df, outpath, feat, scope=False):
     print('Testing overall distribution of {}.'.format(feat))
-    types = format_df(df, feat=feat)
+    types = format_df(df, scope=scope, feat=feat)
     statvals = []
     pvals = []
     for tp, row in types.iterrows():
@@ -88,13 +94,17 @@ def test_overall(df, outpath, feat):
         idx = CHARGES
     elif feat == 'Descent Description':
         idx = RACES
+    if scope:
+        title = 'ovr_{}_dist_2013-14.csv'.format(feat)
+    else:
+        title = 'ovr_{}_dist.csv'.format(feat)
     try:
-        pd.DataFrame({'Statistic':statvals, 'P-Value':pvals}, index=idx).to_csv(os.path.join(outpath, 'ovr_{}_dist.csv'.format(feat)))
+        pd.DataFrame({'Statistic':statvals, 'P-Value':pvals}, index=idx).to_csv(os.path.join(outpath, title))
     except ValueError:
-        pd.DataFrame({'Statistic':statvals, 'P-Value':pvals}, index=idx[:-1]).to_csv(os.path.join(outpath, 'ovr_{}_dist.csv'.format(feat)))
+        pd.DataFrame({'Statistic':statvals, 'P-Value':pvals}, index=idx[:-1]).to_csv(os.path.join(outpath, title))
     print('Complete.')
 
-def test_by_div(df, outpath, feat):
+def test_by_div(df, outpath, feat, scope=False):
     print('Testing distribution of {} per division.'.format(feat))
     if feat == 'Crime Type' or feat == 'Charge Group Description':
         idx = TYPES
@@ -102,7 +112,7 @@ def test_by_div(df, outpath, feat):
         idx = CHARGES
     elif feat == 'Descent Description':
         idx = RACES
-    types = format_df(df, area=True, feat=feat)
+    types = format_df(df, scope=scope, area=True, feat=feat)
     results = pd.DataFrame()
     detailed = []
     divisions = []
@@ -138,10 +148,18 @@ def test_by_div(df, outpath, feat):
         results[div] = vals
         print('-'*20)
         print('')
-    pd.concat(detailed, keys=divisions, names=['Division','{}'.format(feat)]).to_csv(os.path.join(outpath, 'div_{}_detailed.csv'.format(feat)))
+    if scope:
+        title = 'div_{}_detailed_2013-14.csv'.format(feat)
+        title2 = 'div_{}_dist_2013-14.csv'.format(feat)
+        title3 = 'T-Test Results of {} Distribution by Division 2013-14'.format(feat)
+    else:
+        title = 'div_{}_detailed.csv'.format(feat)
+        title2 = 'div_{}_dist.csv'.format(feat)
+        title3 = 'T-Test Results of {} Distribution by Division'.format(feat)
+    pd.concat(detailed, keys=divisions, names=['Division','{}'.format(feat)]).to_csv(os.path.join(outpath, title))
     try:
         results.set_index(pd.Index(idx), inplace=True)
     except ValueError:
         results.set_index(pd.Index(idx[:-1]), inplace=True)
-    results.T.to_csv(os.path.join(outpath, 'div_{}_dist.csv'.format(feat)))
-    plot_graph(results.T, outpath, 'heat', 'T-Test Results of {} Distribution by Division'.format(feat), feat, 'Division')
+    results.T.to_csv(os.path.join(outpath, title2))
+    plot_graph(results.T, outpath, 'heat', title3, feat, 'Division')
