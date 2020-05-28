@@ -7,6 +7,16 @@ from geospatial import *
 
 # Global constants
 def load_params(fp):
+    """
+    Reads a JSON configuration file and loads it as a dictionary.
+
+        Parameters:
+            fp: Filepath of JSON file.
+
+        Returns:
+            Dictionary of parameters.
+    """
+    
     with open(fp) as fh:
         param = json.load(fh)
 
@@ -21,6 +31,17 @@ RACES = load_params('references/races.json')
 
 # Main driver functions
 def get_data(urls, outpath = 'data/raw', title = ['stops', 'arrests', 'crime'], **kwargs):
+    """
+    Extracts and saves raw data.
+
+        Parameters:
+            urls: List of urls to raw data.
+            outpath: Directory to store output.
+            title: List of titles for each dataset.
+
+        Returns:
+    """
+    
     if not os.path.exists(outpath):
         os.mkdir(outpath)
     for j, i in enumerate(urls):    
@@ -31,6 +52,18 @@ def get_data(urls, outpath = 'data/raw', title = ['stops', 'arrests', 'crime'], 
     return 'Files saved in ' + outpath
 
 def process(paths, cols, outpath = 'data/cleaned' ,title = ['stops', 'arrests', 'crime'], **kwargs):
+    """
+    Cleans all datasets.
+
+        Parameters:
+            paths: List of paths of the raw datasets.
+            cols: 2D list of column names for each dataset to retain after cleaning.
+            outpath: Directory to store output.
+            title: List of titles for each dataset.
+
+        Returns:
+    """
+    
     if not os.path.exists(outpath):
         os.mkdir(outpath)
     for j,i in enumerate(paths):
@@ -38,6 +71,18 @@ def process(paths, cols, outpath = 'data/cleaned' ,title = ['stops', 'arrests', 
     return 'Files saved in ' + outpath
 
 def process_data(inpath, outpath, cols, title, **kwargs):
+    """
+    Reads raw data and runs its respective cleaning function.
+
+        Parameters:
+            inpath: Filepath of raw data.
+            outpath: Filepath of cleaned data.
+            cols: Columns to retain after cleaning.
+            title: Title of cleaned dataset.
+
+        Returns:
+    """
+    
     print('Processing {} data.'.format(title))
     if not os.path.exists(outpath):
         os.mkdir(outpath)
@@ -59,6 +104,16 @@ def process_data(inpath, outpath, cols, title, **kwargs):
     
 # Functions that transform each unique dataset
 def transform_stops(df, cols, **kwargs):
+    """
+    Stops-specific cleaning function.
+
+        Parameters:
+            df: Stops data as a Pandas DataFrame object.
+
+        Returns:
+            Cleaned stops data.
+    """
+    
     df = clean_divisions(df)
     df = add_year(df)
     df = df.loc[(df['Year'] != 1900)]
@@ -69,6 +124,16 @@ def transform_stops(df, cols, **kwargs):
     return limit_cols(df.dropna(subset=['Stop Division','Stop Date', 'Reporting District', 'Post Stop Activity Indicator']), cols)
 
 def transform_crimes(df, cols):
+    """
+    Crimes-specific cleaning function.
+
+        Parameters:
+            df: Crimes data as a Pandas DataFrame object.
+
+        Returns:
+            Cleaned crimes data.
+    """
+    
     df = add_year(df, date='Date Rptd')
     df['Arrested'] = df['Status Desc'].apply(arrest)
     df['Crime Type'] = df['Crm Cd Desc'].apply(classify_type)
@@ -78,6 +143,16 @@ def transform_crimes(df, cols):
     return limit_cols(df, cols)
 
 def transform_arrests(df, cols):
+    """
+    Arrests-specific cleaning function.
+
+        Parameters:
+            df: Arrests data as a Pandas DataFrame object.
+
+        Returns:
+            Cleaned arrests data.
+    """
+    
     df['Arrest Date'] = pd.to_datetime(df['Arrest Date'])
     df = add_year(df, date='Arrest Date')
     df['Descent Code'] = df['Descent Code'].map(RACES)
@@ -89,13 +164,47 @@ def transform_arrests(df, cols):
 
 # Helper methods
 def limit_cols(df, cols):
+    """
+    Retains specified columns of a DataFrame.
+
+        Parameters:
+            df: Pandas DataFrame object.
+
+        Returns:
+            DataFrame with relevant columns only.
+    """
+    
     return df[cols]
 
 def add_year(df, date = 'Stop Date'):
+    """
+    Appends a year column to a DataFrame according to a DateTime column.
+
+        Parameters:
+            df: Pandas DataFrame object.
+            date: Name of DateTime column to extract year from.
+
+        Returns:
+            DataFrame with 'Year' column.
+    """
+    
     df['Year'] = pd.to_datetime(df[date]).dt.year
     return df
 
 def clean_divisions(df, make_dict = True, divs = ['Officer 1 Division Number', 'Officer 2 Division Number'], desc = ['Division Description 1', 'Division Description 2']):
+    """
+    Cleans and imputes Officer Division columns in Stops data.
+
+        Parameters:
+            df: Stops data as a Pandas DataFrame object.
+            make_dict: Boolean indicating whether a dictionary of division number-description should be made.
+            divs: List of column names for division numbers.
+            desc: List of column names for division descriptions.
+
+        Returns:
+            DataFrame.
+    """
+    
     for j in desc:    
         if j == 'Division Description 1':
             df = df.dropna(subset = [j])
@@ -114,6 +223,16 @@ def clean_divisions(df, make_dict = True, divs = ['Officer 1 Division Number', '
     return df
 
 def is_int(x):
+    """
+    Checks if the object is an Integer.
+
+        Parameters:
+            x: String or Integer.
+
+        Returns:
+            True if x is an Integer, else returns False.
+    """
+    
     try:
         x = int(x)
         return True
@@ -121,6 +240,17 @@ def is_int(x):
         return False
     
 def rand_prob(x, start_09):
+    """
+    Imputes a reporting district from a probability distribution that starts with '09'.
+
+        Parameters:
+            x: Reporting district.
+            start_09: Probability distribution of reporting districts starting with '09'.
+
+        Returns:
+            Integer or null.
+    """
+    
     try:
         return int(x)
     except:
@@ -131,21 +261,61 @@ def rand_prob(x, start_09):
         return np.nan
     
 def impute_districts(col):
+    """
+    Imputes the reporting district column.
+
+        Parameters:
+            col: Name of reporting district column.
+
+        Returns:
+            Cleaned column.
+    """
+    
     clean = col.loc[col.apply(is_int)]
     start_09 = clean.loc[clean.astype(str).str.startswith('09')].value_counts(normalize=True)
     return col.apply(rand_prob, start_09=start_09)
 
 def get_gis():
+    """
+    Gets GIS file for reporting districts and the divisions they belong in.
+
+        Parameters:
+
+        Returns:
+            Spatially-enabled DataFrame.
+    """
+    
     df = read_gis()
     df = df[['REPDIST','APREC']].drop_duplicates()
     return df
 
 def get_stop_div(df, gis):
+    """
+    Appends a 'Stop Division' column based on the 'Reporting District' column.
+
+        Parameters:
+            df: Stops data as a Pandas DataFrame object.
+            gis: GIS data with Reporting District and Division.
+
+        Returns:
+            Stops data with 'Stop Division' column.
+    """
+    
     df['Stop Division'] = df[['Reporting District']].merge(gis, left_on='Reporting District', right_on='REPDIST')['APREC'].fillna('UNK')
     df['Stop Division'] = df['Stop Division'].replace(DIV_MAP)
     return df
 
 def classify_charge(x):
+    """
+    Classifies a crime by its charge.
+
+        Parameters:
+            x: Crime description as a String.
+
+        Returns:
+            Crime charge as a String.
+    """
+    
     lowered = x.lower()
     if any(substring in lowered for substring in CRIME_CHARGES['Petty']):
         return 'Infraction'
@@ -159,6 +329,16 @@ def classify_charge(x):
         return 'Others'
     
 def classify_type(x):
+    """
+    Classifies a crime by its type.
+
+        Parameters:
+            x: Crime description as a String.
+
+        Returns:
+            Crime type as a String.
+    """
+    
     lowered = x.lower()
     if any(substring in lowered for substring in CRIME_TYPES['Inchoate']):
         return 'Inchoate'
@@ -171,6 +351,16 @@ def classify_type(x):
     return 'Financial/Other'
 
 def classify_arrest(x):
+    """
+    Classifies an arrest by its charge.
+
+        Parameters:
+            x: Arrest description as a String.
+
+        Returns:
+            Arrest charge as a String.
+    """
+    
     try:
         if any(substring in x for substring in ARREST_TYPES['Inchoate']):
             return 'Inchoate'
@@ -185,11 +375,32 @@ def classify_arrest(x):
         return 'Financial/Other'
 
 def arrest(x):
+    """
+    Checks if a crime resulted in an arrest.
+
+        Parameters:
+            x: Crime description as a String.
+
+        Returns:
+            1 if arrest is in description else 0.
+    """
+    
     if 'arrest' in x.lower():
         return 1
     return 0
 
 def get_predpol(year, area):
+    """
+    Classifies an observation as treatment or control according to division and year.
+
+        Parameters:
+            year: Year the instance was observed.
+            area: Division where the isntance occurred.
+
+        Returns:
+            'PredPol' if it belongs in the treatment else 'No PredPol'.
+    """
+    
     if year < 2013:
         return 'No PredPol'
     elif year >= 2015:
