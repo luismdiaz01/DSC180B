@@ -13,6 +13,17 @@ from geospatial import *
 
 # Main driver functions
 def generate_viz(rawpaths, inpaths, outpaths, **kwargs):
+    """
+    Creates visualizations for each dataset.
+
+        Parameters:
+            rawpaths: List of paths to raw datasets.
+            inpaths: List of paths to cleaned datasets.
+            outpaths: List of paths for visualizations for each dataset.
+
+        Returns:
+    """
+    
     for rawpath, inpath, outpath in zip(rawpaths, inpaths, outpaths):
         if not os.path.exists(outpath):
             os.mkdir(outpath)
@@ -46,6 +57,17 @@ def generate_viz(rawpaths, inpaths, outpaths, **kwargs):
 
 # Helper methods
 def describe_null(outpath, rawpath, cleanpath, **kwargs):
+    """
+    Generates two DataFrames indicating the proportion of null values of each column in the raw and cleaned datasets.
+
+        Parameters:
+            outpath: Path to store DataFrames.
+            rawpath: Path of raw dataset.
+            cleanpath: Path of clean dataset.
+
+        Returns:
+    """
+    
     try:
         raw_data = pd.read_csv(rawpath).drop(columns=['Unnamed: 0'])
     except KeyError:
@@ -57,6 +79,22 @@ def describe_null(outpath, rawpath, cleanpath, **kwargs):
     print('Complete')
 
 def group_df(df, group, how, ppcol=None, ppbool=None, normalized=False, valuecol=None):
+    """
+    Performs groupby aggregation on a DataFrame before plotting.
+
+        Parameters:
+            df: DataFrame Object.
+            group: Column to groupby on.
+            how: Aggregation method.
+            ppcol: Column inidicating treatment/control group.
+            ppbool: Boolean indicating whether to seggregate by treatment and control groups.
+            normalized: Boolean indicating whether or not to normalize value counts.
+            valuecol: Column to get value counts or distribution.
+
+        Returns:
+            DataFrame that has been grouped and aggregated.
+    """
+    
     if ppcol is not None:
         df = df.loc[(df.Year != 2020)&(df[ppcol]==ppbool)&(df.Year>=2013)]
     else:
@@ -74,11 +112,39 @@ def group_df(df, group, how, ppcol=None, ppbool=None, normalized=False, valuecol
     return result
 
 def group_df_census(df, census, group, col):
+    """
+    Performs groupby aggregation that requires census information to compute rates.
+
+        Parameters:
+            df: DataFrame object.
+            census: Census DataFrame.
+            group: Column to group on.
+            col: Column to return.
+
+        Returns:
+            Pandas Series of rates wrt Census total.
+    """
+    
     types = pd.DataFrame(df.groupby(group).apply(lambda x: len(x)), columns=[col])
     types[col] = types[col].apply(lambda x: x / census['Total'])
     return types.sort_values(by=[col], ascending=True)[col]
 
 def pivot_df(df, index, columns, values, aggfunc, census=None):
+    """
+    Pivots a DataFrame with the option to compute rates of different races using the census data.
+
+        Parameters:
+            df: DataFrame object.
+            index: Column to use as index.
+            columns: Column to use as columns.
+            values: Column to use to compute values.
+            aggfunc: Method to compute values.
+            census: Census data (optional).
+
+        Returns:
+            Transformed DataFrame.
+    """
+    
     if census is not None:
         rates = df.loc[df.Year!=2020].pivot_table(index=index, columns=columns, values=values, aggfunc=aggfunc)
         for col in rates:
@@ -87,6 +153,18 @@ def pivot_df(df, index, columns, values, aggfunc, census=None):
     return df.loc[df.Year!=2020].pivot_table(index=index, columns=columns, values=values, aggfunc=aggfunc)
 
 def pivot_df_census(df, census, col):
+    """
+    Pivots a DataFrame and computes rates using total population.
+
+        Parameters:
+            df: DataFrame object.
+            census: Census data (optional).
+            col: Column to use as index.
+
+        Returns:
+            Transformed DataFrame.
+    """
+    
     def arrest_rates():
         return lambda x: sum(x) / census['Total']
 
@@ -94,6 +172,20 @@ def pivot_df_census(df, census, col):
                     columns=['PredPol Deployed'], aggfunc=arrest_rates())
 
 def plot_graph(df, outpath, how, title, xlabel, ylabel):
+    """
+    Plots the specified graph with the given DataFrame.
+
+        Parameters:
+            df: DataFrame object.
+            outpath: Path of output.
+            how: Type of graph to plot.
+            title: Title of plot.
+            xlabel: Label of x-axis.
+            ylabel: Label of y-axis.
+
+        Returns:
+    """
+    
     print('Plotting {}'.format(title))
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1,1,1)
