@@ -22,6 +22,16 @@ GROUP_STOPS2 = ['Stop Division', 'Reassigned Officer']
 
 # Main driver functions
 def analyze(types, inpaths, outpaths):
+    """
+    Performs t-testing on different features of each dataset.
+
+        Parameters:
+            types: 2D list of features to test on each dataset.
+            inpaths: List of paths to clean datasets.
+            outpaths: List of paths for output.
+
+        Returns:
+    """
     for tp, inpath, outpath in zip(types, inpaths, outpaths):
         if not os.path.exists(outpath):
             os.mkdir(outpath)
@@ -33,6 +43,19 @@ def analyze(types, inpaths, outpaths):
 
 # Helper methods
 def format_df(df, feat, area=False, group='PredPol Deployed', group2=['Area Name', 'PredPol Deployed']):
+    """
+    Groups a DataFrame by treatment and control before testing.
+
+        Parameters:
+            df: DataFrame.
+            feat: Feature to test on.
+            area: Boolean indicating whether or not to perform at a division level.
+            group: Column indicating control and treatment.
+            group2: Column indicating control and treatment at a division level.
+
+        Returns:
+            Transformed DataFrame.
+    """
     if feat == 'Descent Description':
         group = 'Reassigned Officer'
         group2 = ['Stop Division', 'Reassigned Officer']
@@ -43,8 +66,19 @@ def format_df(df, feat, area=False, group='PredPol Deployed', group2=['Area Name
 
 def test(crime_tp, prop_pp, prop_nonpp, pct_pp=0.562854, n=100000):
     """
-    Tests a single type of crime/arrest/race.
+    Runs a simulation on a single feature with its proportion.
+
+        Parameters:
+            crime_tp: Feature being tested on.
+            prop_pp: Proportion of the feature in PredPol areas.
+            prop_nonpp: Proportion of the feature in non-PredPol areas.
+            pct_pp: Proportion of total observations that were PredPol.
+            n: Population size for testing.
+
+        Returns:
+            Transformed DataFrame.
     """
+
     NUM_POP = n
     PCT_PREDPOL = pct_pp
     PCT_NONPREDPOL = 1-PCT_PREDPOL
@@ -68,6 +102,17 @@ def test(crime_tp, prop_pp, prop_nonpp, pct_pp=0.562854, n=100000):
     return res.statistic, res.pvalue
 
 def test_overall(df, outpath, feat):
+    """
+    Performs t-testing of a feature at county level.
+
+        Parameters:
+            df: DataFrame.
+            outpath: Path of output.
+            feat: Feature to test on.
+
+        Returns:
+    """
+
     print('Testing overall distribution of {}.'.format(feat))
     types = format_df(df, feat=feat)
     statvals = []
@@ -95,6 +140,17 @@ def test_overall(df, outpath, feat):
     print('Complete.')
 
 def test_by_div(df, outpath, feat):
+    """
+    Performs t-testing of a feature at division level.
+
+        Parameters:
+            df: DataFrame.
+            outpath: Path of output.
+            feat: Feature to test on.
+
+        Returns:
+    """
+
     print('Testing distribution of {} per division.'.format(feat))
     if feat == 'Crime Type' or feat == 'Charge Group Description':
         idx = TYPES
