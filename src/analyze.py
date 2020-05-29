@@ -22,6 +22,16 @@ GROUP_STOPS2 = ['Stop Division', 'Reassigned Officer']
 
 # Main driver functions
 def analyze(types, inpaths, outpaths):
+    """
+    Performs t-testing on different features of each dataset.
+
+        Parameters:
+            types: 2D list of features to test on each dataset.
+            inpaths: List of paths to clean datasets.
+            outpaths: List of paths for output.
+
+        Returns:
+    """
     for tp, inpath, outpath in zip(types, inpaths, outpaths):
         if not os.path.exists(outpath):
             os.mkdir(outpath)
@@ -34,14 +44,26 @@ def analyze(types, inpaths, outpaths):
             test_by_div(df, outpath, feat=t, scope=True)
 
 # Helper methods
-def format_df(df, feat, scope=False, area=False, group='PredPol Deployed', group2=['Area Name', 'PredPol Deployed']):
+def format_df(df, feat, area=False, group='PredPol Deployed', group2=['Area Name', 'PredPol Deployed']):
+    """
+    Groups a DataFrame by treatment and control before testing.
+
+        Parameters:
+            df: DataFrame.
+            feat: Feature to test on.
+            area: Boolean indicating whether or not to perform at a division level.
+            group: Column indicating control and treatment.
+            group2: Column indicating control and treatment at a division level.
+
+        Returns:
+            Transformed DataFrame.
+    """
+
     if feat == 'Descent Description':
         group = 'Reassigned Officer'
         group2 = ['Stop Division', 'Reassigned Officer']
-    if scope:
-        df = df.loc[(df.Year >= 2013) & (df.Year <= 2014)]
-    else:
-        df = df.loc[df.Year != 2020]
+
+    df = df.loc[df.Year != 2020]
     if not area:
         return df.groupby(group)[feat].value_counts(normalize=True).unstack().T
     else:
@@ -49,8 +71,19 @@ def format_df(df, feat, scope=False, area=False, group='PredPol Deployed', group
 
 def test(crime_tp, prop_pp, prop_nonpp, pct_pp=0.562854, n=100000):
     """
-    Tests a single type of crime/arrest/race.
+    Runs a simulation on a single feature with its proportion.
+
+        Parameters:
+            crime_tp: Feature being tested on.
+            prop_pp: Proportion of the feature in PredPol areas.
+            prop_nonpp: Proportion of the feature in non-PredPol areas.
+            pct_pp: Proportion of total observations that were PredPol.
+            n: Population size for testing.
+
+        Returns:
+            Transformed DataFrame.
     """
+
     NUM_POP = n
     PCT_PREDPOL = pct_pp
     PCT_NONPREDPOL = 1-PCT_PREDPOL
@@ -73,7 +106,18 @@ def test(crime_tp, prop_pp, prop_nonpp, pct_pp=0.562854, n=100000):
     
     return res.statistic, res.pvalue
 
-def test_overall(df, outpath, feat, scope=False):
+def test_overall(df, outpath, feat):
+    """
+    Performs t-testing of a feature at county level.
+
+        Parameters:
+            df: DataFrame.
+            outpath: Path of output.
+            feat: Feature to test on.
+
+        Returns:
+    """
+
     print('Testing overall distribution of {}.'.format(feat))
     types = format_df(df, scope=scope, feat=feat)
     statvals = []
@@ -94,17 +138,26 @@ def test_overall(df, outpath, feat, scope=False):
         idx = CHARGES
     elif feat == 'Descent Description':
         idx = RACES
-    if scope:
-        title = 'ovr_{}_dist_2013-14.csv'.format(feat)
-    else:
-        title = 'ovr_{}_dist.csv'.format(feat)
+
+    title = 'ovr_{}_dist.csv'.format(feat)
     try:
         pd.DataFrame({'Statistic':statvals, 'P-Value':pvals}, index=idx).to_csv(os.path.join(outpath, title))
     except ValueError:
         pd.DataFrame({'Statistic':statvals, 'P-Value':pvals}, index=idx[:-1]).to_csv(os.path.join(outpath, title))
     print('Complete.')
 
-def test_by_div(df, outpath, feat, scope=False):
+def test_by_div(df, outpath, feat):
+    """
+    Performs t-testing of a feature at division level.
+
+        Parameters:
+            df: DataFrame.
+            outpath: Path of output.
+            feat: Feature to test on.
+
+        Returns:
+    """
+
     print('Testing distribution of {} per division.'.format(feat))
     if feat == 'Crime Type' or feat == 'Charge Group Description':
         idx = TYPES
@@ -148,14 +201,10 @@ def test_by_div(df, outpath, feat, scope=False):
         results[div] = vals
         print('-'*20)
         print('')
-    if scope:
-        title = 'div_{}_detailed_2013-14.csv'.format(feat)
-        title2 = 'div_{}_dist_2013-14.csv'.format(feat)
-        title3 = 'T-Test Results of {} Distribution by Division 2013-14'.format(feat)
-    else:
-        title = 'div_{}_detailed.csv'.format(feat)
-        title2 = 'div_{}_dist.csv'.format(feat)
-        title3 = 'T-Test Results of {} Distribution by Division'.format(feat)
+
+    title = 'div_{}_detailed.csv'.format(feat)
+    title2 = 'div_{}_dist.csv'.format(feat)
+    title3 = 'T-Test Results of {} Distribution by Division'.format(feat)
     pd.concat(detailed, keys=divisions, names=['Division','{}'.format(feat)]).to_csv(os.path.join(outpath, title))
     try:
         results.set_index(pd.Index(idx), inplace=True)
