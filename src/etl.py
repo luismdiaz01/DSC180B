@@ -120,7 +120,8 @@ def transform_stops(df, cols, **kwargs):
     df['Reporting District'] = impute_districts(df['Reporting District'])
     df['Officer 1 Serial Number'] = df['Officer 1 Serial Number'].fillna(0).astype(int)
     df = get_stop_div(df, get_gis())
-    df['Reassigned Officer'] = (df['Stop Division'] == df['Division Description 1']) & (df['Year'] >= 2013)
+    df['PredPol Deployed'] = df.apply(lambda x: get_predpol(x['Year'], x['Stop Division']), axis=1)
+    df['LASER Deployed'] = df.apply(lambda x: get_LASER(x['Year'], x['Stop Division']), axis=1)
     return limit_cols(df.dropna(subset=['Stop Division','Stop Date', 'Reporting District', 'Post Stop Activity Indicator']), cols)
 
 def transform_crimes(df, cols):
@@ -139,6 +140,7 @@ def transform_crimes(df, cols):
     df['Crime Type'] = df['Crm Cd Desc'].apply(classify_type)
     df['Crime Charge'] = df['Crm Cd Desc'].apply(classify_charge)
     df['PredPol Deployed'] = df.apply(lambda x: get_predpol(x['Year'], x['AREA NAME']), axis=1)
+    df['LASER Deployed'] = df.apply(lambda x: get_LASER(x['Year'], x['AREA NAME']), axis=1)
     df.rename(columns={'AREA NAME': 'Area Name'}, inplace=True)
     return limit_cols(df, cols)
 
@@ -159,6 +161,7 @@ def transform_arrests(df, cols):
     df['Charge Group Description'] = df['Charge Group Description'].apply(classify_arrest)
     df['Arrest Type Code'] = df['Arrest Type Code'].map(ARREST_CHARGES)
     df['PredPol Deployed'] = df.apply(lambda x: get_predpol(x['Year'], x['Area Name']), axis=1)
+    df['LASER Deployed'] = df.apply(lambda x: get_LASER(x['Year'], x['Area Name']), axis=1)
     df['Total'] = pd.Series([1] * df.shape[0])
     return limit_cols(df, cols)
 
@@ -406,8 +409,50 @@ def get_predpol(year, area):
     elif year >= 2015:
         return 'PredPol'
     else:
-        if area in ['N Hollywood', 'Southwest', 'Foothill']:
+        if area in ['N Hollywood', 'Southwest', 'Foothill','NORTH HOLLYWOOD', 'SOUTH WEST', 'FOOTHILL']:
             return 'PredPol'
         else:
             return 'No PredPol'
     
+def get_LASER(year, area):
+    """
+    Classifies an observation as treatment or control according to division and year.
+
+        Parameters:
+            year: Year the instance was observed.
+            area: Division where the isntance occurred.
+
+        Returns:
+            'PredPol' if it belongs in the treatment else 'No PredPol'.
+    """
+    yes = 'LASER'
+    no = 'No LASER'
+    if year < 2011:
+        return no
+    elif year == 2011:
+        if area in ['NEWTON', 'Newton']:
+            return yes
+        else:
+            return no
+    elif year == 2015:
+        if area in ['NEWTON', 'Newton','77th Street', 'SEVENTY-SEVENTH', 'SOUTH EAST', 'SOUTH WEST', 'Southwest', 'Southeast']:
+            return yes
+        else:
+            return no      
+    elif year == 2016:
+        if area in ['NEWTON', 'Newton','77th Street', 'SEVENTY-SEVENTH', 'SOUTH EAST', 'SOUTH WEST', 'Southwest', 'Southeast', 'RAMPART', 'Rampart', 'NORTH EAST', 'HARBOR', 'Northeast', 'Harbor']:
+            return yes
+        else:
+            return no       
+    elif year == 2017:
+        if area in ['NEWTON', 'Newton','77th Street', 'SEVENTY-SEVENTH', 'SOUTH EAST', 'SOUTH WEST', 'Southwest', 'Southeast', 'RAMPART', 'Rampart', 'NORTH EAST', 'HARBOR', 'Northeast', 'Harbor', 'FOOTHILL', 'HOLLYWOOD', 'MISSION', 'OLYMPIC', 'Olympic', 'Foothill', 'Mission', 'Hollywood']:
+            return yes
+        else:
+            return no       
+    elif year == 2018:
+        if area in ['NEWTON', 'Newton','77th Street', 'SEVENTY-SEVENTH', 'SOUTH EAST', 'SOUTH WEST', 'Southwest', 'Southeast', 'RAMPART', 'Rampart', 'NORTH EAST', 'HARBOR', 'Northeast', 'Harbor', 'FOOTHILL', 'HOLLYWOOD', 'MISSION', 'OLYMPIC', 'Olympic', 'Foothill', 'Mission', 'Hollywood', 'WEST LA', 'PACIFIC', 'WILSHIRE', 'CENTRAL''West LA', 'Pacific', 'Wilshire', 'Central']:
+            return yes
+        else:
+            return no          
+    else:
+        return no   
