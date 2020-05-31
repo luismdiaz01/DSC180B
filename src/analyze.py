@@ -57,8 +57,8 @@ def format_df(df, feat, area=False, group='PredPol Deployed', group2=['Area Name
             Transformed DataFrame.
     """
     if feat == 'Descent Description':
-        group = 'Reassigned Officer'
-        group2 = ['Stop Division', 'Reassigned Officer']
+        group = 'PredPol Deployed'
+        group2 = ['Stop Division', 'PredPol Deployed']
     if not area:
         return df.loc[df.Year != 2020].groupby(group)[feat].value_counts(normalize=True).unstack().T
     else:
