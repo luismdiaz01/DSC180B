@@ -429,7 +429,7 @@ def get_LASER(year, area):
     no = 'No LASER'
     if year < 2011:
         return no
-    elif year == 2011:
+    elif (year >= 2011) and (year < 2015):
         if area in ['NEWTON', 'Newton']:
             return yes
         else:
