@@ -31,13 +31,13 @@ def generate_viz(rawpaths, inpaths, outpaths, **kwargs):
         df = pd.read_csv(inpath)
         describe_null(outpath, rawpath, inpath)
         if 'stops' in rawpath:
-            plot_graph(group_df(df, ['Reassigned Officer','Year'], 'size'), outpath, 'bar', 'Number of Stops by Year', 'Year', 'Number of Stops')
-            plot_graph(group_df(df, ['Reassigned Officer','Stop Division'], 'size', normalized=True), outpath, 'barh', 'Proportion of Stops per Division 2010-2019', 'Proportion', 'Stop Division')
-            plot_graph(group_df(df, ['Year','Stop Division'], 'size', 'Reassigned Officer', True, normalized=True), outpath, 'heat', 'Proportion of Stops per Division by Reassigned Officers', 'Year', 'Stop Division')
-            plot_graph(group_df(df, ['Year','Stop Division'], 'size', 'Reassigned Officer', False, normalized=True), outpath, 'heat', 'Proportion of Stops per Division by Non-Reassigned Officers', 'Year', 'Stop Division')
-            plot_graph(group_df(df, None, 'value', 'Reassigned Officer', True, normalized=True, valuecol='Descent Description'), outpath, 'pie', 'Racial Distribution of Stops by Reassigned Officers', None, None)
-            plot_graph(group_df(df, None, 'value', 'Reassigned Officer', False, normalized=True, valuecol='Descent Description'), outpath, 'pie', 'Racial Distribution of Stops by Non-Reassigned Officers', None, None)
-            plot_graph(group_df(df, 'Reassigned Officer', 'value', valuecol='Post Stop Activity Indicator'), outpath, 'bar', 'Distribution of Stops with Further Actions (2010-2019)', 'Post Stop Activity Indicator', 'Proportion')
+            plot_graph(group_df(df, ['PredPol Deployed','Year'], 'size'), outpath, 'bar', 'Number of Stops by Year', 'Year', 'Number of Stops')
+            plot_graph(group_df(df, ['PredPol Deployed','Stop Division'], 'size', normalized=True), outpath, 'barh', 'Proportion of Stops per Division 2010-2019', 'Proportion', 'Stop Division')
+            plot_graph(group_df(df, ['Year','Stop Division'], 'size', 'PredPol Deployed', True, normalized=True), outpath, 'heat', 'Proportion of Stops per Division by Reassigned Officers', 'Year', 'Stop Division')
+            plot_graph(group_df(df, ['Year','Stop Division'], 'size', 'PredPol Deployed', False, normalized=True), outpath, 'heat', 'Proportion of Stops per Division by Non-Reassigned Officers', 'Year', 'Stop Division')
+            plot_graph(group_df(df, None, 'value', 'PredPol Deployed', True, normalized=True, valuecol='Descent Description'), outpath, 'pie', 'Racial Distribution of Stops by Reassigned Officers', None, None)
+            plot_graph(group_df(df, None, 'value', 'PredPol Deployed', False, normalized=True, valuecol='Descent Description'), outpath, 'pie', 'Racial Distribution of Stops by Non-Reassigned Officers', None, None)
+            plot_graph(group_df(df, 'PredPol Deployed', 'value', valuecol='Post Stop Activity Indicator'), outpath, 'bar', 'Distribution of Stops with Further Actions (2010-2019)', 'Post Stop Activity Indicator', 'Proportion')
         elif 'crime' in rawpath:
             plot_graph(group_df(df, ['PredPol Deployed','Year'], 'size'), outpath, 'bar', 'Number of Crimes by Year', 'Year', 'Number of Crimes')
             plot_graph(group_df(df, ['Year','Area Name'], 'size'), outpath, 'heat', 'Number of crimes per Division (2010-2019)', 'Year', 'Stop Division')
@@ -96,14 +96,17 @@ def group_df(df, group, how, ppcol=None, ppbool=None, normalized=False, valuecol
     """
     
     if ppcol is not None:
-        df = df.loc[(df.Year != 2020)&(df[ppcol]==ppbool)&(df.Year>=2013)]
+        if ppbool is True:
+            df = df.loc[(df.Year != 2020)&(df[ppcol]=='PredPol')&(df.Year>=2013)]
+        else:
+            df = df.loc[(df.Year != 2020)&(df[ppcol]=='No PredPol')&(df.Year>=2013)]
     else:
         df = df.loc[df.Year!=2020]
     if how == 'size':
         result =  df.groupby(group).size().unstack().T
     elif how == 'value' and group is not None:
         result = df.groupby(group)[valuecol].value_counts(normalize=True).unstack().T
-    elif how == 'value':
+    elif how == 'value' and group is None:
         result = df[valuecol].value_counts(normalize=True)
     elif how == 'mean':
         result = df.groupby(group)[valuecol].mean().unstack().T
@@ -199,7 +202,7 @@ def plot_graph(df, outpath, how, title, xlabel, ylabel):
         patches, texts = plt.pie(df)
         labels = ['{0} - {1:1.2f} %'.format(i,j) for i,j in zip(df.index, df)]
         patches, labels, dummy =  zip(*sorted(zip(patches, labels, df), key=lambda x: x[2], reverse=True))
-        plt.legend(patches, labels, loc='center left', bbox_to_anchor=(-0.1, 1.), fontsize=8)
+        plt.legend(patches, labels, loc='best', fontsize=8)
         ax.axis('equal')
     plt.title(title, fontsize=25)
     if xlabel is not None:
