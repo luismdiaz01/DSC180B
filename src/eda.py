@@ -33,10 +33,10 @@ def generate_viz(rawpaths, inpaths, outpaths, **kwargs):
         if 'stops' in rawpath:
             plot_graph(group_df(df, ['PredPol Deployed','Year'], 'size'), outpath, 'bar', 'Number of Stops by Year', 'Year', 'Number of Stops')
             plot_graph(group_df(df, ['PredPol Deployed','Stop Division'], 'size', normalized=True), outpath, 'barh', 'Proportion of Stops per Division 2010-2019', 'Proportion', 'Stop Division')
-            plot_graph(group_df(df, ['Year','Stop Division'], 'size', 'PredPol Deployed', True, normalized=True), outpath, 'heat', 'Proportion of Stops per Division by Reassigned Officers', 'Year', 'Stop Division')
-            plot_graph(group_df(df, ['Year','Stop Division'], 'size', 'PredPol Deployed', False, normalized=True), outpath, 'heat', 'Proportion of Stops per Division by Non-Reassigned Officers', 'Year', 'Stop Division')
-            plot_graph(group_df(df, None, 'value', 'PredPol Deployed', True, normalized=True, valuecol='Descent Description'), outpath, 'pie', 'Racial Distribution of Stops by Reassigned Officers', None, None)
-            plot_graph(group_df(df, None, 'value', 'PredPol Deployed', False, normalized=True, valuecol='Descent Description'), outpath, 'pie', 'Racial Distribution of Stops by Non-Reassigned Officers', None, None)
+            plot_graph(group_df(df, ['Year','Stop Division'], 'size', 'PredPol Deployed', True, normalized=True), outpath, 'heat', 'Proportion of Stops per Division in PredPol Divisions', 'Year', 'Stop Division')
+            plot_graph(group_df(df, ['Year','Stop Division'], 'size', 'PredPol Deployed', False, normalized=True), outpath, 'heat', 'Proportion of Stops per Division in Non-PredPol Divisions', 'Year', 'Stop Division')
+            plot_graph(group_df(df, None, 'value', 'PredPol Deployed', True, normalized=True, valuecol='Descent Description'), outpath, 'pie', 'Racial Distribution of Stops in PredPol Divisions', None, None)
+            plot_graph(group_df(df, None, 'value', 'PredPol Deployed', False, normalized=True, valuecol='Descent Description'), outpath, 'pie', 'Racial Distribution of Stops in Non-PredPol Divisions', None, None)
             plot_graph(group_df(df, 'PredPol Deployed', 'value', valuecol='Post Stop Activity Indicator'), outpath, 'bar', 'Distribution of Stops with Further Actions (2010-2019)', 'Post Stop Activity Indicator', 'Proportion')
         elif 'crime' in rawpath:
             plot_graph(group_df(df, ['PredPol Deployed','Year'], 'size'), outpath, 'bar', 'Number of Crimes by Year', 'Year', 'Number of Crimes')
