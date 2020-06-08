@@ -117,6 +117,7 @@ def transform_stops(df, cols, **kwargs):
     df = clean_divisions(df)
     df = add_year(df)
     df = df.loc[(df['Year'] != 1900)]
+    df['Stop Date'] = pd.to_datetime(df['Stop Date'])
     df['Reporting District'] = impute_districts(df['Reporting District'])
     df['Officer 1 Serial Number'] = df['Officer 1 Serial Number'].fillna(0).astype(int)
     df = get_stop_div(df, get_gis())
